@@ -9,9 +9,18 @@ import javafx.scene.control.Button;
 import javafx.scene.layout.Pane;
 import javafx.stage.Stage;
 
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.nio.file.StandardCopyOption;
+
 public class Ventana extends Application {
 
-    public static void main(String[] args) {
+    public static void main(String[] args) throws IOException {
+
+
+
         launch(args);
     }
 
@@ -33,6 +42,9 @@ public class Ventana extends Application {
 
         stage.setTitle("¡Hola mundo!");
         stage.setScene(new Scene(root, 1360, 760));
+
+        DocumentLibrary.addFile(stage);
+
         stage.show();
     }
 }
