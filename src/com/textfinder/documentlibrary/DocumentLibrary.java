@@ -124,11 +124,14 @@ public class DocumentLibrary {
         return true;
     }
 
-    public static boolean deleteFile(String pFile){
+    public static boolean deleteFiles(String pFile){
+
+
+
         return true;
     }
 
-    public static boolean updateFile(String pFile){
+    public static boolean refreshFiles(String pFile){
         return true;
     }
 
