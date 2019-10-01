@@ -24,23 +24,39 @@ public class Ventana extends Application {
     public void start(Stage stage){
 
         this.stage = stage;
+        stage.setTitle("Text Finder");
 
-        Button btn = new Button();
-        btn.setLayoutX(100);
-        btn.setLayoutY(100);
-        btn.setText("Agregar archvivos");
-        btn.setOnAction(new EventHandler<ActionEvent>() {
+        //Se crea el panel y se agrega al stage
+        Pane panel = new Pane();
+        stage.setScene(new Scene(panel, 1360, 760));
+
+        //Boton de agregar archivos
+        Button btnAddFile = new Button();
+        btnAddFile.setLayoutX(100);
+        btnAddFile.setLayoutY(100);
+        btnAddFile.setText("Agregar archvivos");
+        btnAddFile.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent event) {
                 DocumentLibrary.addFile(stage);
             }
         });
+        panel.getChildren().add(btnAddFile);
 
-        Pane root = new Pane();
-        root.getChildren().add(btn);
+        //Boton de agregar folders
+        Button btnAddFolder = new Button();
+        btnAddFolder.setLayoutX(100);
+        btnAddFolder.setLayoutY(200);
+        btnAddFolder.setText("Agregar carpeta");
+        btnAddFolder.setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent event) {
+                DocumentLibrary.addFolder(stage);
+            }
+        });
+        panel.getChildren().add(btnAddFolder);
 
-        stage.setTitle("Text Finder");
-        stage.setScene(new Scene(root, 1360, 760));
+
 
         stage.show();
     }

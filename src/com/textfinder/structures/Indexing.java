@@ -17,6 +17,11 @@ public class Indexing {
 
     }
 
+
+
+
+
+
     public void textSearch(String pText){
 
     }
