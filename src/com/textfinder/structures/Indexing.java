@@ -1,8 +1,7 @@
 package com.textfinder.structures;
 
 import com.textfinder.documentlibrary.DocumentLibrary;
-import com.textfinder.view.Window;
-import javafx.stage.Stage;
+import com.textfinder.filemanagers.PDFManager;
 
 import java.io.File;
 import java.io.IOException;
