@@ -24,10 +24,16 @@ public class Window extends Application {
 
     private Stage stage;
     private Pane root;
+
     private Pane libraryPanel;
     private ScrollPane scrollPaneLibrary;
     private VBox vBoxLibrary;
-    private ArrayList<CheckBox> checkboxListFiles;
+    private ArrayList<CheckBox> checkboxListLibraryFiles;
+
+    private Pane libraryResultPanel;
+    private ScrollPane scrollPaneLibraryResult;
+    private VBox vBoxLibraryResult;
+    private ArrayList<Button> buttonsLibraryResult;
 
     public static void main(String[] args) throws IOException {
 
@@ -38,7 +44,8 @@ public class Window extends Application {
     public void start(Stage stage){
 
         DocumentLibrary.updateFileList();
-        checkboxListFiles = new ArrayList<CheckBox>();
+        checkboxListLibraryFiles = new ArrayList<CheckBox>();
+        buttonsLibraryResult = new ArrayList<Button>();
 
         this.stage = stage;
         stage.setTitle("Text Finder");
@@ -48,12 +55,13 @@ public class Window extends Application {
         root = panel;
         stage.setScene(new Scene(panel, 1360, 760));
 
-        initLibraryPanel(panel);
+        initLibraryPanel();
+        initLibraryResultPanel();
 
         stage.show();
     }
 
-    private void initLibraryPanel(Pane pParent) {
+    private void initLibraryPanel() {
 
         //Panel de libreria
 
@@ -62,7 +70,7 @@ public class Window extends Application {
         libraryPanel.setLayoutX(0);
         libraryPanel.setLayoutY(0);
         libraryPanel.setBackground(new Background(new BackgroundFill(Color.rgb(233, 150, 122), CornerRadii.EMPTY, Insets.EMPTY)));
-        pParent.getChildren().add(libraryPanel);
+        root.getChildren().add(libraryPanel);
 
         //Label del titulo panel de libreria
 
@@ -154,11 +162,11 @@ public class Window extends Application {
     private void updateCheckBox(){
         vBoxLibrary = new VBox();
         vBoxLibrary.setPrefSize(251, 100);
-        checkboxListFiles = new ArrayList<CheckBox>();
+        checkboxListLibraryFiles = new ArrayList<CheckBox>();
         for (int i = 0; i < DocumentLibrary.filesString.size(); i++) {
 
             CheckBox checkBox = new CheckBox(DocumentLibrary.filesString.get(i));
-            checkboxListFiles.add(checkBox);
+            checkboxListLibraryFiles.add(checkBox);
             vBoxLibrary.getChildren().add(checkBox);
         }
         scrollPaneLibrary.setContent(vBoxLibrary);
@@ -172,17 +180,17 @@ public class Window extends Application {
         String failed = "";
         String finalText = "";
 
-        for(int i = 0; i < checkboxListFiles.size(); i++){
+        for(int i = 0; i < checkboxListLibraryFiles.size(); i++){
 
-            if(checkboxListFiles.get(i).isSelected()){
+            if(checkboxListLibraryFiles.get(i).isSelected()){
                 vBoxLibrary.getChildren().remove(i);
 
-                if(DocumentLibrary.deleteFile(checkboxListFiles.get(i).getText())){
-                    success += checkboxListFiles.get(i).getText() + "\n";
+                if(DocumentLibrary.deleteFile(checkboxListLibraryFiles.get(i).getText())){
+                    success += checkboxListLibraryFiles.get(i).getText() + "\n";
                 }else{
-                    failed += checkboxListFiles.get(i).getText() + "\n";
+                    failed += checkboxListLibraryFiles.get(i).getText() + "\n";
                 }
-                checkboxListFiles.remove(i);
+                checkboxListLibraryFiles.remove(i);
                 i--;
             }
         }
@@ -195,6 +203,14 @@ public class Window extends Application {
         if(finalText != ""){
             Dialogs.showInformationDialog("Result", finalText);
         }
+
+    }
+
+    private void initLibraryResultPanel(){
+
+        libraryResultPanel = new Pane();
+
+        
 
     }
 }
