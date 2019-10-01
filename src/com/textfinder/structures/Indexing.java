@@ -1,6 +1,8 @@
 package com.textfinder.structures;
 
 import com.textfinder.documentlibrary.DocumentLibrary;
+import com.textfinder.view.Window;
+import javafx.stage.Stage;
 
 import java.io.File;
 import java.io.IOException;
@@ -11,6 +13,7 @@ public class Indexing {
     private static final Indexing INSTANCE = new Indexing();
     private static BinarySearchTree binarySearchTree;
     private static ArrayList<String> words;
+    private static int wordsIndexed = 0;
 
     private Indexing(){
         binarySearchTree = new BinarySearchTree();
@@ -23,6 +26,10 @@ public class Indexing {
 
     public static void parseDocuments(){
 
+        binarySearchTree = new BinarySearchTree();
+
+        wordsIndexed = 0;
+
         //Recorre la lista de archivos buscando los pdf y parseandolos e indexandolos
         for(int i = 0; i < DocumentLibrary.files.size(); i++){
 
@@ -32,6 +39,8 @@ public class Indexing {
         }
 
         binarySearchTree.inorder();
+
+        Dialogs.showInformationDialog("Success",   wordsIndexed + " words have been indexed");
 
     }
 
@@ -44,7 +53,10 @@ public class Indexing {
 
             String palabra[] = text.split(" ");
 
+
             for(int i = 0; i < palabra.length; i++){
+
+                wordsIndexed++;
 
                 if(!palabra[i].equals("") && !palabra[i].contains("\n")){
                     //Crea el occurrence de cada palabra
@@ -62,11 +74,13 @@ public class Indexing {
 
             }
 
+
+
+
         }catch (IOException e) {
             Dialogs.showErrorDialog("Failed", "Cannot find the file");
         }
     }
-
 
 
 
