@@ -65,31 +65,27 @@ class BinarySearchTree {
     void inorderRec(Node root) {
         if (root != null) {
             inorderRec(root.left);
-            root.key.toString();
+            System.out.println(root.key.toString());
             //System.out.println(root.key.getWord());
             inorderRec(root.right);
         }
     }
-    /*
-    // Driver Program to test above functions
-    public static void main(String[] args) {
-        BinarySearchTree tree = new BinarySearchTree();
 
-         Let us create following BST
-              50
-           /     \
-          30      70
-         /  \    /  \
-       20   40  60   80
-        tree.insert(50);
-        tree.insert(30);
-        tree.insert(20);
-        tree.insert(40);
-        tree.insert(70);
-        tree.insert(60);
-        tree.insert(80);
+    // This method mainly calls InorderRec()
+    void inorderSearchWord(String pWord, Occurrence pOccurrence)  {
+        inorderSearchWordRec(root, pWord, pOccurrence);
+    }
 
-        // print inorder traversal of the BST
-        tree.inorder();
-    }*/
+    // A utility function to do inorder traversal of BST
+    void inorderSearchWordRec(Node root, String pWord, Occurrence pOccurrence) {
+        if (root != null) {
+            inorderSearchWordRec(root.left,  pWord,  pOccurrence);
+            if(root.key.getWord().equals(pWord)){
+                root.key.getOccurrenceList().add(pOccurrence);
+            }
+            //System.out.println(root.key.getWord());
+            inorderSearchWordRec(root.right,  pWord,  pOccurrence);
+        }
+    }
+
 }

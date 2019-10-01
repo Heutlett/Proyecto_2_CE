@@ -2,6 +2,7 @@ package com.textfinder.view;
 
 import com.textfinder.documentlibrary.DocumentLibrary;
 import com.textfinder.structures.Dialogs;
+import com.textfinder.structures.Indexing;
 import javafx.application.Application;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
@@ -11,10 +12,14 @@ import javafx.scene.control.*;
 import javafx.scene.layout.*;
 import javafx.scene.text.Font;
 import javafx.stage.Stage;
+
+import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 
 import javafx.scene.paint.Color;
+
+import static com.textfinder.structures.Indexing.*;
 
 
 public class Window extends Application {
@@ -146,12 +151,27 @@ public class Window extends Application {
         });
         libraryPanel.getChildren().add(btnRefreshFiles);
 
+        //Boton de refrescar archivos
+        Button btnIndex = new Button();
+        btnIndex.setLayoutX(48);
+        btnIndex.setLayoutY(250);
+        btnIndex.setPrefSize(198, 31);
+        btnIndex.setText("Index");
+        btnIndex.setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent event) {
+
+                parseDocuments();
+            }
+        });
+        libraryPanel.getChildren().add(btnIndex);
+
         //Scroll pane
 
         scrollPaneLibrary = new ScrollPane();
-        scrollPaneLibrary.setPrefSize(270, 475);
+        scrollPaneLibrary.setPrefSize(270, 439);
         scrollPaneLibrary.setLayoutX(24);
-        scrollPaneLibrary.setLayoutY(269);
+        scrollPaneLibrary.setLayoutY(305);
         scrollPaneLibrary.setHbarPolicy(ScrollPane.ScrollBarPolicy.AS_NEEDED);
         scrollPaneLibrary.setVbarPolicy(ScrollPane.ScrollBarPolicy.AS_NEEDED);
         libraryPanel.getChildren().add(scrollPaneLibrary);
@@ -251,9 +271,9 @@ public class Window extends Application {
         libraryResultPanel.getChildren().add(radioButtonSortBySize);
 
         scrollPaneLibraryResult = new ScrollPane();
-        scrollPaneLibraryResult.setPrefSize(270, 475);
+        scrollPaneLibraryResult.setPrefSize(270, 439);
         scrollPaneLibraryResult.setLayoutX(24);
-        scrollPaneLibraryResult.setLayoutY(269);
+        scrollPaneLibraryResult.setLayoutY(305);
         scrollPaneLibraryResult.setHbarPolicy(ScrollPane.ScrollBarPolicy.AS_NEEDED);
         scrollPaneLibraryResult.setVbarPolicy(ScrollPane.ScrollBarPolicy.AS_NEEDED);
         libraryResultPanel.getChildren().add(scrollPaneLibraryResult);

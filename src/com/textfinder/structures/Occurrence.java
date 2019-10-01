@@ -6,7 +6,13 @@ public class Occurrence {
 
     private File document;
     private String documentName;
-    private String position;
+    private int position;
+
+    public Occurrence(File document, String documentName, int position) {
+        this.document = document;
+        this.documentName = documentName;
+        this.position = position;
+    }
 
     public File getDocument() {
         return document;
@@ -24,11 +30,11 @@ public class Occurrence {
         this.documentName = documentName;
     }
 
-    public String getPosition() {
+    public int getPosition() {
         return position;
     }
 
-    public void setPosition(String position) {
+    public void setPosition(int position) {
         this.position = position;
     }
 
