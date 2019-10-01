@@ -20,11 +20,12 @@ import java.util.ArrayList;
 import javafx.scene.paint.Color;
 
 
-public class Ventana extends Application {
+public class Window extends Application {
 
     private Stage stage;
     private Pane root;
     private Pane libraryPanel;
+    private ScrollPane scrollPaneLibrary;
     private VBox vBoxLibrary;
     private ArrayList<CheckBox> checkboxListFiles;
 
@@ -83,6 +84,7 @@ public class Ventana extends Application {
             @Override
             public void handle(ActionEvent event) {
                 DocumentLibrary.addFile(stage);
+                updateCheckBox();
             }
         });
         libraryPanel.getChildren().add(btnAddFile);
@@ -97,6 +99,7 @@ public class Ventana extends Application {
             @Override
             public void handle(ActionEvent event) {
                 DocumentLibrary.addFolder(stage);
+                updateCheckBox();
             }
         });
         libraryPanel.getChildren().add(btnAddFolder);
@@ -116,7 +119,7 @@ public class Ventana extends Application {
         });
         libraryPanel.getChildren().add(btnDeleteFile);
 
-        //Boton de borrar archivos
+        //Boton de refrescar archivos
         Button btnRefreshFiles = new Button();
         btnRefreshFiles.setLayoutX(48);
         btnRefreshFiles.setLayoutY(210);
@@ -125,33 +128,40 @@ public class Ventana extends Application {
         btnRefreshFiles.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent event) {
-                DocumentLibrary.refreshFiles("");
+                DocumentLibrary.refreshFiles();
+                updateCheckBox();
             }
         });
         libraryPanel.getChildren().add(btnRefreshFiles);
 
         //Scroll pane
 
-        ScrollPane scrollPane = new ScrollPane();
-        scrollPane.setPrefSize(270, 475);
-        scrollPane.setLayoutX(24);
-        scrollPane.setLayoutY(269);
-        scrollPane.setHbarPolicy(ScrollPane.ScrollBarPolicy.AS_NEEDED);
-        scrollPane.setVbarPolicy(ScrollPane.ScrollBarPolicy.AS_NEEDED);
-        libraryPanel.getChildren().add(scrollPane);
+        scrollPaneLibrary = new ScrollPane();
+        scrollPaneLibrary.setPrefSize(270, 475);
+        scrollPaneLibrary.setLayoutX(24);
+        scrollPaneLibrary.setLayoutY(269);
+        scrollPaneLibrary.setHbarPolicy(ScrollPane.ScrollBarPolicy.AS_NEEDED);
+        scrollPaneLibrary.setVbarPolicy(ScrollPane.ScrollBarPolicy.AS_NEEDED);
+        libraryPanel.getChildren().add(scrollPaneLibrary);
 
         //Container vbox
+        updateCheckBox();
 
+
+    }
+
+    private void updateCheckBox(){
         vBoxLibrary = new VBox();
         vBoxLibrary.setPrefSize(251, 100);
-
+        checkboxListFiles = new ArrayList<CheckBox>();
         for (int i = 0; i < DocumentLibrary.filesString.size(); i++) {
 
             CheckBox checkBox = new CheckBox(DocumentLibrary.filesString.get(i));
             checkboxListFiles.add(checkBox);
             vBoxLibrary.getChildren().add(checkBox);
         }
-        scrollPane.setContent(vBoxLibrary);
+        scrollPaneLibrary.setContent(vBoxLibrary);
+        //Llamar funcion para re indexar todoo.
     }
 
     private void removeCheckBoxFiles(){

@@ -138,7 +138,8 @@ public class DocumentLibrary {
         return false;
     }
 
-    public static boolean refreshFiles(String pFile){
+    public static boolean refreshFiles(){
+        updateFileList();
         return true;
     }
 
