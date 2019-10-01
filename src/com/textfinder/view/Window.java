@@ -130,6 +130,7 @@ public class Window extends Application {
             public void handle(ActionEvent event) {
                 DocumentLibrary.refreshFiles();
                 updateCheckBox();
+                Dialogs.showInformationDialog("Success", "La lista de archivos se ha actualizado correctamente");
             }
         });
         libraryPanel.getChildren().add(btnRefreshFiles);
@@ -161,6 +162,7 @@ public class Window extends Application {
             vBoxLibrary.getChildren().add(checkBox);
         }
         scrollPaneLibrary.setContent(vBoxLibrary);
+
         //Llamar funcion para re indexar todoo.
     }
 
