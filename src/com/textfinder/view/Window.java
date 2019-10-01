@@ -141,7 +141,7 @@ public class Window extends Application {
             public void handle(ActionEvent event) {
                 DocumentLibrary.refreshFiles();
                 updateCheckBox();
-                Dialogs.showInformationDialog("Success", "La lista de archivos se ha actualizado correctamente");
+                Dialogs.showInformationDialog("Success", "The file list has been updated successfully");
             }
         });
         libraryPanel.getChildren().add(btnRefreshFiles);
