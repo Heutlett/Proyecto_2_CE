@@ -7,10 +7,7 @@ import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.geometry.Insets;
 import javafx.scene.Scene;
-import javafx.scene.control.Button;
-import javafx.scene.control.CheckBox;
-import javafx.scene.control.Label;
-import javafx.scene.control.ScrollPane;
+import javafx.scene.control.*;
 import javafx.scene.layout.*;
 import javafx.scene.text.Font;
 import javafx.stage.Stage;
@@ -35,6 +32,11 @@ public class Window extends Application {
     private VBox vBoxLibraryResult;
     private ArrayList<Button> buttonsLibraryResult;
 
+    private Pane resultPanel;
+
+    private Pane searchPanel;
+    private TextField textFieldSearch;
+
     public static void main(String[] args) throws IOException {
 
         launch(args);
@@ -57,6 +59,7 @@ public class Window extends Application {
 
         initLibraryPanel();
         initLibraryResultPanel();
+        initResultPanel();
 
         stage.show();
     }
@@ -209,8 +212,82 @@ public class Window extends Application {
     private void initLibraryResultPanel(){
 
         libraryResultPanel = new Pane();
+        libraryResultPanel.setPrefSize(320, 760);
+        libraryResultPanel.setLayoutX(1040);
+        libraryResultPanel.setLayoutY(0);
+        libraryResultPanel.setBackground(new Background(new BackgroundFill(Color.rgb(233, 150, 122), CornerRadii.EMPTY, Insets.EMPTY)));
+        root.getChildren().add(libraryResultPanel);
 
-        
+        Label lblTitle = new Label("List of results");
+        lblTitle.setLayoutX(69);
+        lblTitle.setLayoutY(22);
+        lblTitle.setFont(new Font(30));
+        lblTitle.setStyle("-fx-font-weight: bold;");
+        lblTitle.setTextFill(Color.rgb(255, 255, 255));
+        libraryResultPanel.getChildren().add(lblTitle);
+
+        Label sortBy = new Label("Sort by");
+        sortBy.setLayoutX(24);
+        sortBy.setLayoutY(105);
+        sortBy.setTextFill(Color.rgb(255, 255, 255));
+        libraryResultPanel.getChildren().add(sortBy);
+
+        RadioButton radioButtonSortByName = new RadioButton("Name");
+        radioButtonSortByName.setLayoutX(24);
+        radioButtonSortByName.setLayoutY(140);
+        radioButtonSortByName.setTextFill(Color.rgb(255, 255, 255));
+        libraryResultPanel.getChildren().add(radioButtonSortByName);
+
+        RadioButton radioButtonSortByDateCreated = new RadioButton("Date created");
+        radioButtonSortByDateCreated.setLayoutX(24);
+        radioButtonSortByDateCreated.setLayoutY(170);
+        radioButtonSortByDateCreated.setTextFill(Color.rgb(255, 255, 255));
+        libraryResultPanel.getChildren().add(radioButtonSortByDateCreated);
+
+        RadioButton radioButtonSortBySize = new RadioButton("Size");
+        radioButtonSortBySize.setLayoutX(24);
+        radioButtonSortBySize.setLayoutY(200);
+        radioButtonSortBySize.setTextFill(Color.rgb(255, 255, 255));
+        libraryResultPanel.getChildren().add(radioButtonSortBySize);
+
+        scrollPaneLibraryResult = new ScrollPane();
+        scrollPaneLibraryResult.setPrefSize(270, 475);
+        scrollPaneLibraryResult.setLayoutX(24);
+        scrollPaneLibraryResult.setLayoutY(269);
+        scrollPaneLibraryResult.setHbarPolicy(ScrollPane.ScrollBarPolicy.AS_NEEDED);
+        scrollPaneLibraryResult.setVbarPolicy(ScrollPane.ScrollBarPolicy.AS_NEEDED);
+        libraryResultPanel.getChildren().add(scrollPaneLibraryResult);
 
     }
+
+    private void initResultPanel(){
+
+        resultPanel = new Pane();
+        resultPanel.setPrefSize(716,674);
+        resultPanel.setLayoutX(322);
+        resultPanel.setLayoutY(84);
+        resultPanel.setBackground(new Background(new BackgroundFill(Color.rgb(255, 220, 192), CornerRadii.EMPTY, Insets.EMPTY)));
+        root.getChildren().add(resultPanel);
+
+        searchPanel = new Pane();
+        searchPanel.setPrefSize(716,82);
+        searchPanel.setLayoutX(322);
+        searchPanel.setLayoutY(0);
+        searchPanel.setBackground(new Background(new BackgroundFill(Color.rgb(233, 150, 122), CornerRadii.EMPTY, Insets.EMPTY)));
+        root.getChildren().add(searchPanel);
+
+        textFieldSearch = new TextField();
+        textFieldSearch.setPromptText("Enter a word or phrase to search");
+        textFieldSearch.setPrefSize(514,31);
+        textFieldSearch.setLayoutX(29);
+        textFieldSearch.setLayoutY(26);
+        searchPanel.getChildren().add(textFieldSearch);
+
+        Button btnSearch = new Button("Search");
+        btnSearch.setLayoutX(594);
+        btnSearch.setLayoutY(26);
+        searchPanel.getChildren().add(btnSearch);
+
+    }
+
 }
