@@ -14,7 +14,8 @@ public class DocumentLibrary {
 
     private final static String PATH1 = "C:/Users/carlo/OneDrive/Escritorio/TEC 2019/Material de cursos/Datos 1/Proyectos/Proyecto 2/Proyecto_2_CE/src/com/textfinder/documentlibrary/documents/";
     private final static String PATH2 = "C:\\Users\\carlo\\OneDrive\\Escritorio\\TEC 2019\\Material de cursos\\Datos 1\\Proyectos\\Proyecto 2\\Proyecto_2_CE\\src\\com\\textfinder\\documentlibrary\\documents";
-    private static ArrayList<String> files = new ArrayList<>();
+    public static ArrayList<String> filesString = new ArrayList<String>();
+    public static ArrayList<File> files = new ArrayList<File>();
 
     private DocumentLibrary(){}
 
@@ -45,11 +46,12 @@ public class DocumentLibrary {
         updateFileList();
 
         try{
-            if(!files.contains(file.getName())){
+            if(!filesString.contains(file.getName())){
                 Path o = Paths.get(file.getAbsolutePath());
                 Path d = Paths.get(PATH1 + file.getName());
                 Files.copy(o,d, StandardCopyOption.REPLACE_EXISTING);
-                files.add(file.getName());
+                filesString.add(file.getName());
+                files.add(file);
                 return true;
             }else{
                 return false;
@@ -124,11 +126,16 @@ public class DocumentLibrary {
         return true;
     }
 
-    public static boolean deleteFiles(String pFile){
+    public static boolean deleteFile(String pFile){
 
-
-
-        return true;
+        for(int i = 0; i < files.size(); i++){
+            if(files.get(i).getName().equals(pFile)){
+                File fichero = files.get(i);
+                fichero.delete();
+                return true;
+            }
+        }
+        return false;
     }
 
     public static boolean refreshFiles(String pFile){
@@ -146,19 +153,21 @@ public class DocumentLibrary {
         else return "";
     }
 
-    private static void updateFileList(){
-        files = new ArrayList<String>();
+    public static void updateFileList(){
+        filesString = new ArrayList<String>();
+        files = new ArrayList<File>();
         File directoryFile = new File(PATH2); // carpeta donde estan los pdf
         String[] listFiles = directoryFile.list();//extrae los nombres de archivo
 
         for(int i = 0; i < directoryFile.list().length; i++){
-            files.add(listFiles[i]);
+            filesString.add(listFiles[i]);
+            files.add(directoryFile.listFiles()[i]);
         }
     }
 
     private void printFileList(){
-        for(int i = 0; i < files.size(); i++){
-            System.out.println(files.get(i));
+        for(int i = 0; i < filesString.size(); i++){
+            System.out.println(filesString.get(i));
         }
     }
 
