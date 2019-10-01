@@ -73,9 +73,9 @@ public class DocumentLibrary {
         //Copia el archivo
         if(file != null){
             if(copyFiles(file)){
-                Dialogs.showInformationDialog("Success", "El archivo se ha agregado satisfactoriamente");
+                Dialogs.showInformationDialog("Success", "The file has been successfully added");
             }else{
-                Dialogs.showErrorDialog("Failed", "El archivo que desea ingresar ya se encuentra en la biblioteca");
+                Dialogs.showErrorDialog("Failed", "The file you want to enter is already in the library");
                 //AGREGAR OPCION DE REEMPLAZAR.
             }
 
@@ -106,21 +106,21 @@ public class DocumentLibrary {
                     if(copyFiles(folder.listFiles()[i])){
                         filesNamesSuccess += folder.list()[i] + "\n";
                     }else{
-                        filesNamesFailed += folder.list()[i] + "   ------>   ya existe\n";
+                        filesNamesFailed += folder.list()[i] + "   ------>   it already exists\n";
                     }
                 }else{
-                    filesNamesFailed += folder.list()[i] + "   ------>   extension denegada\n";
+                    filesNamesFailed += folder.list()[i] + "   ------>   extension denied\n";
                 }
 
             }
 
         }
         if(filesNamesSuccess != ""){
-            finalText += "Se han agregado satisfactoriamente los siguientes archivos: \n\n" + filesNamesSuccess + "\n";
+            finalText += "The following files have been successfully added: \n\n" + filesNamesSuccess + "\n";
         }
 
         if(filesNamesFailed != ""){
-            finalText += "Debido a un error no se han agregado los siguientes archivos: \n\n" + filesNamesFailed + "\n";
+            finalText += "Due to an error the following files have not been added: \n\n" + filesNamesFailed + "\n";
         }
         Dialogs.showInformationDialog("Finish", finalText);
         return true;
