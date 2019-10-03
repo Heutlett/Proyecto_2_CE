@@ -27,6 +27,6 @@ public class KeyNode {
     }
 
     public String toString(){
-        return "word: " + word + " occurrenceList: " + occurrenceList.toString() + "\n";
+        return "word: " + word + ", occurrenceList: " + occurrenceList.toString() + "\n";
     }
 }

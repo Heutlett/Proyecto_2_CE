@@ -7,8 +7,10 @@ import javafx.application.Application;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.geometry.Insets;
+import javafx.scene.Cursor;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
+import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.*;
 import javafx.scene.text.Font;
 import javafx.stage.Stage;
@@ -146,21 +148,33 @@ public class Window extends Application {
             public void handle(ActionEvent event) {
                 DocumentLibrary.refreshFiles();
                 updateCheckBox();
+                parseDocuments();
                 Dialogs.showInformationDialog("Success", "The file list has been updated successfully");
             }
         });
         libraryPanel.getChildren().add(btnRefreshFiles);
 
-        //Boton de refrescar archivos
+        //Boton de indexar archivos
         Button btnIndex = new Button();
         btnIndex.setLayoutX(48);
         btnIndex.setLayoutY(250);
         btnIndex.setPrefSize(198, 31);
         btnIndex.setText("Index");
+        btnIndex.setOnMousePressed(new EventHandler<MouseEvent>() {
+            @Override
+            public void handle(MouseEvent event) {
+                stage.getScene().setCursor(Cursor.WAIT);
+            }
+        });
+        btnIndex.setOnMouseReleased(new EventHandler<MouseEvent>() {
+            @Override
+            public void handle(MouseEvent event) {
+                stage.getScene().setCursor(Cursor.DEFAULT);
+            }
+        });
         btnIndex.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent event) {
-
                 parseDocuments();
             }
         });
@@ -178,8 +192,6 @@ public class Window extends Application {
 
         //Container vbox
         updateCheckBox();
-
-
     }
 
     private void updateCheckBox(){
