@@ -3,6 +3,7 @@ package com.textfinder.structures;
 import com.textfinder.documentlibrary.DocumentLibrary;
 import com.textfinder.filemanagers.DOCXManager;
 import com.textfinder.filemanagers.PDFManager;
+import com.textfinder.filemanagers.TXTManager;
 
 import java.io.File;
 import java.io.IOException;
@@ -61,21 +62,25 @@ public class Indexing {
 
                 } else {
                     if (DocumentLibrary.getFileExtension(pFile).equals("txt")) {
-                        return;
+                        text = TXTManager.getText(pFile.getAbsolutePath());
                     }
                 }
             }
 
+
+
             String palabra[] = text.split(" ");
 
+            int counter = 0;
 
             for (int i = 0; i < palabra.length; i++) {
 
                 wordsIndexed++;
 
-                if (!palabra[i].equals("") && !palabra[i].contains("\n")) {
+                if (!palabra[i].equals("") && !palabra[i].equals("\n") && !palabra[i].equals(" ")) {
                     //Crea el occurrence de cada palabra
-                    Occurrence occurrence = new Occurrence(pFile, pFile.getName(), i);
+                    Occurrence occurrence = new Occurrence(pFile, pFile.getName(), counter);
+                    counter++;
                     //Si la palabra ya se habia agregado al indexado
                     if (!words.contains(palabra[i])) {
                         words.add(palabra[i]);

@@ -18,6 +18,7 @@ public class PDFManager {
     private static String Text;
     private static String filePath;
     private static File file;
+    private static String words = "QWERTYUIOPASDFGHJKLZXCVBNMqwertyuiopasdfghjklzxcvbnm1234567890 ";
 
     private PDFManager() {
 
@@ -40,11 +41,17 @@ public class PDFManager {
         pdfStripper.setStartPage(0);
         pdfStripper.setEndPage(pdDoc.getNumberOfPages());
         Text = pdfStripper.getText(pdDoc);
-        return Text;
-    }
 
-    public PDDocument getPdDoc() {
-        return pdDoc;
+
+        String textFinal = "";
+
+        for(int i = 0; i < Text.length(); i++){
+            if(words.contains("" +Text.charAt(i))){
+                textFinal += Text.charAt(i);
+            }
+        }
+        System.out.println(textFinal);
+        return textFinal;
     }
 
 

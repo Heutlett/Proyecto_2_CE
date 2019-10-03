@@ -12,27 +12,13 @@ public class DOCXManager {
 
         try {
 
-            String path = "";
-
-            for(int i = 0; i < pPath.length(); i++){
-                if(pPath.charAt(i) == '\\'){
-                    path +=  '/';
-                }else{
-                    path += pPath.charAt(i);
-                }
-            }
-
-
-            System.out.println(path);
-
-            XWPFDocument docx = new XWPFDocument(new FileInputStream(path));
+            XWPFDocument docx = new XWPFDocument(new FileInputStream(pPath));
             XWPFWordExtractor we = new XWPFWordExtractor(docx);
-            return we.getText();
+            return we.getText().replaceAll("\n", " ");
 
         }catch (IOException e){
             return null;
         }
-
 
     }
 
