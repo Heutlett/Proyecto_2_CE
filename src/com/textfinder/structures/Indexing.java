@@ -45,61 +45,63 @@ public class Indexing {
 
     }
 
+    private static String[] getWords(File pFile){
 
-
-    //Divide un pdf en palabras y las almacena en la lista words
-    private static void parseFile(File pFile){
         try {
 
-            String text = "";
+        String text = "";
 
-            if (DocumentLibrary.getFileExtension(pFile).equals("pdf")) {
-                text = PDFManager.toText(pFile.getAbsolutePath());
+        if (DocumentLibrary.getFileExtension(pFile).equals("pdf")) {
+            text = PDFManager.toText(pFile.getAbsolutePath());
+        } else {
+            if (DocumentLibrary.getFileExtension(pFile).equals("docx")) {
+
+                text = DOCXManager.getText(pFile.getAbsolutePath());
+
             } else {
-                if (DocumentLibrary.getFileExtension(pFile).equals("docx")) {
-
-                    text = DOCXManager.getText(pFile.getAbsolutePath());
-
-                } else {
-                    if (DocumentLibrary.getFileExtension(pFile).equals("txt")) {
-                        text = TXTManager.getText(pFile.getAbsolutePath());
-                    }
+                if (DocumentLibrary.getFileExtension(pFile).equals("txt")) {
+                    text = TXTManager.getText(pFile.getAbsolutePath());
                 }
             }
+        }
 
-
-
-            String palabra[] = text.split(" ");
-
-            int counter = 0;
-
-            for (int i = 0; i < palabra.length; i++) {
-
-                wordsIndexed++;
-
-                if (!palabra[i].equals("") && !palabra[i].equals("\n") && !palabra[i].equals(" ")) {
-                    //Crea el occurrence de cada palabra
-                    Occurrence occurrence = new Occurrence(pFile, pFile.getName(), counter);
-                    counter++;
-                    //Si la palabra ya se habia agregado al indexado
-                    if (!words.contains(palabra[i])) {
-                        words.add(palabra[i]);
-                        OccurrenceLinkedList occurrenceLinkedList = new OccurrenceLinkedList();
-                        occurrenceLinkedList.add(occurrence);
-                        binarySearchTree.insert(new KeyNode(palabra[i], occurrenceLinkedList));
-                    } else { //Si la palabra ya estaba indexada solo agrega la ocurrencia
-                        binarySearchTree.inorderSearchWord(palabra[i], occurrence);
-                    }
-                }
-
-            }
+        return text.split(" ");
 
         }catch (IOException e) {
             Dialogs.showErrorDialog("Failed", "Cannot find the file");
+            return null;
         }
+
     }
 
+    //Divide un pdf en palabras y las almacena en la lista words
+    private static void parseFile(File pFile){
 
+        String words[] = getWords(pFile);
+
+        int counter = 0;
+
+        for (int i = 0; i < words.length; i++) {
+
+            wordsIndexed++;
+
+            if (!words[i].equals("") && !words[i].equals("\n") && !words[i].equals(" ")) {
+                //Crea el occurrence de cada palabra
+                Occurrence occurrence = new Occurrence(pFile, pFile.getName(), counter);
+                counter++;
+                //Si la palabra ya se habia agregado al indexado
+                if (!Indexing.words.contains(words[i])) {
+                    Indexing.words.add(words[i]);
+                    OccurrenceLinkedList occurrenceLinkedList = new OccurrenceLinkedList();
+                    occurrenceLinkedList.add(occurrence);
+                    binarySearchTree.insert(new KeyNode(words[i], occurrenceLinkedList));
+                } else { //Si la palabra ya estaba indexada solo agrega la ocurrencia
+                    binarySearchTree.inorderSearchWord(words[i], occurrence);
+                }
+            }
+
+        }
+    }
 
     public void textSearch(String pText){
 
