@@ -39,7 +39,7 @@ public class Occurrence {
     }
 
     public String toString(){
-        return  " Position=" + position;
+        return "File=" +documentName  + " Position=" + position;
     }
 
 }
