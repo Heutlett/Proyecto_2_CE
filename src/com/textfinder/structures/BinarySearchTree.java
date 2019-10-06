@@ -1,14 +1,16 @@
 package com.textfinder.structures;
 
-import java.security.Key;
-
+/**
+ *
+ */
 class BinarySearchTree {
 
-    // Root of BST
-    Node root;
-    KeyNode result;
+    private Node root;
+    private KeyNode result;
 
-    /* Class containing left and right child of current node and key value*/
+    /**
+     *
+     */
     class Node {
         KeyNode key;
         Node left, right;
@@ -19,119 +21,89 @@ class BinarySearchTree {
         }
     }
 
-    // Constructor
-    BinarySearchTree() {
+    /**
+     *
+     */
+    public BinarySearchTree() {
         root = null;
     }
 
-    // This method mainly calls insertRec()
-    void insert(KeyNode key) {
+    /**
+     *
+     * Inserta un nodo
+     *
+     * @param key
+     */
+    public void insert(KeyNode key) {
         root = insertRec(root, key);
     }
 
-    /* A recursive function to insert a new key in BST */
-    Node insertRec(Node root, KeyNode key) {
+    /**
+     *
+     * Llama recursiva para insertar el nodo
+     *
+     * @param root
+     * @param key
+     * @return
+     */
+    public Node insertRec(Node root, KeyNode key) {
 
-        /* If the tree is empty, return a new node */
         if (root == null) {
             root = new Node(key);
             return root;
         }
 
-        // Otherwise, recur down the tree
         if (key.getWord().compareTo(root.key.getWord()) < 0)
             root.left = insertRec(root.left, key);
         else if (key.getWord().compareTo(root.key.getWord()) > 0)
             root.right = insertRec(root.right, key);
 
-        // return the (unchanged) node pointer
         return root;
 
-        /*
-        // Otherwise, recur down the tree
-        if (key < root.key)
-            root.left = insertRec(root.left, key);
-        else if (key > root.key)
-            root.right = insertRec(root.right, key);
-
-        // return the (unchanged) node pointer
-        return root;
-        */
     }
 
-    // This method mainly calls InorderRec()
-    void inorder()  {
-        inorderRec(root);
+    /**
+     * Recorre el arbol recursivamente inroder imprimiendo sus nodos
+     */
+    public void inorderPrint()  {
+        inorderPrintRec(root);
     }
-
-    // A utility function to do inorder traversal of BST
-    void inorderRec(Node root) {
+    public void inorderPrintRec(Node root) {
         if (root != null) {
-            inorderRec(root.left);
+            inorderPrintRec(root.left);
             System.out.println(root.key.toString());
             //System.out.println(root.key.getWord());
-            inorderRec(root.right);
+            inorderPrintRec(root.right);
         }
     }
 
-    // This method mainly calls InorderRec()
-    void inorderSearchWord(String pWord, Occurrence pOccurrence)  {
-        inorderSearchWordRec(root, pWord, pOccurrence);
-    }
-
-    // A utility function to do inorder traversal of BST
-    void inorderSearchWordRec(Node root, String pWord, Occurrence pOccurrence) {
-        if (root != null) {
-            inorderSearchWordRec(root.left,  pWord,  pOccurrence);
-            if(root.key.getWord().equals(pWord)){
-                root.key.getOccurrenceList().add(pOccurrence);
-            }
-            //System.out.println(root.key.getWord());
-            inorderSearchWordRec(root.right,  pWord,  pOccurrence);
-        }
-    }
-
-    // This method mainly calls InorderRec()
-    Occurrence getOcurrenceByFile(String pWord, String pFile)  {
-        Occurrence o = new Occurrence(null, null);
-        return getOcurrenceByFileRec(root, pWord, pFile, o);
-    }
-
-    // A utility function to do inorder traversal of BST
-    Occurrence getOcurrenceByFileRec(Node root, String pWord, String pFile, Occurrence o) {
-        if (root != null) {
-            getOcurrenceByFileRec(root.left, pWord, pFile, o);
-
-            for(int e = 0; e < root.key.getOccurrenceList().size(); e++){
-                if(root.key.getWord().equals(pWord) && pFile.equals(root.key.getOccurrenceList().get(e).getDocumentName())){
-                    o = root.key.getOccurrenceList().get(e);
-                    //return root.key.getOccurrenceList().get(e);
-                }
-            }
-
-            //System.out.println(root.key.getWord());
-            getOcurrenceByFileRec(root.right, pWord, pFile, o);
-        }
-        return o;
-    }
-
-
+    /**
+     *
+     * Busca la palabra inroder pasada por parametro y devuelve el nodo
+     *
+     * @param pWord
+     * @return KeyNode
+     */
     KeyNode searchWord(String pWord)  {
         result = null;
         searchWordRec(root, pWord);
         return result;
     }
 
-    // A utility function to do inorder traversal of BST
-    void searchWordRec(Node root, String pWord) {
+    /**
+     *
+     * Llamada recursiva inorder para buscar la palabra.
+     *
+     * @param root
+     * @param pWord
+     */
+    public void searchWordRec(Node root, String pWord) {
         if (root != null) {
             searchWordRec(root.left, pWord);
             if(root.key.getWord().equals(pWord)){
                 result = root.key;
-                //Dialogs.showInformationDialog("success", "WordFinded");
             }
             searchWordRec(root.right, pWord);
         }
     }
-
 }

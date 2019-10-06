@@ -58,6 +58,10 @@ public class Window extends Application {
 
     private static String fileName;
 
+    private Label lblResultDocumentName;
+    private Label lblResultWord;
+    private Label lblResultAparitions;
+
     private Button btnOpenFile;
 
     public static void main(String[] args) throws IOException {
@@ -385,10 +389,28 @@ public class Window extends Application {
         resultPanel.setBackground(new Background(new BackgroundFill(Color.rgb(255, 220, 192), CornerRadii.EMPTY, Insets.EMPTY)));
         root.getChildren().add(resultPanel);
 
+        lblResultDocumentName = new Label("Document: ");
+        lblResultDocumentName.setLayoutX(10);
+        lblResultDocumentName.setLayoutY(10);
+        lblResultDocumentName.setTextFill(Color.rgb(102,51,0));
+        resultPanel.getChildren().add(lblResultDocumentName);
+
+        lblResultWord = new Label("Word: ");
+        lblResultWord.setLayoutX(300);
+        lblResultWord.setLayoutY(10);
+        lblResultWord.setTextFill(Color.rgb(102,51,0));
+        resultPanel.getChildren().add(lblResultWord);
+
+        lblResultAparitions = new Label("Aparitions: ");
+        lblResultAparitions.setLayoutX(620);
+        lblResultAparitions.setLayoutY(10);
+        lblResultAparitions.setTextFill(Color.rgb(102,51,0));
+        resultPanel.getChildren().add(lblResultAparitions);
+
         textFlow = new TextFlow();
-        textFlow.setPrefSize(706, 665);
+        textFlow.setPrefSize(706, 627);
         textFlow.setLayoutX(5);
-        textFlow.setLayoutY(5);
+        textFlow.setLayoutY(44);
         textFlow.setTextAlignment(TextAlignment.JUSTIFY);
         textFlow.setLineSpacing(5.0);
         textFlow.setBackground(new Background(new BackgroundFill(Color.rgb(255, 255, 255), CornerRadii.EMPTY, Insets.EMPTY)));
@@ -414,8 +436,9 @@ public class Window extends Application {
         btnSearch.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent event) {
+                Label[] labels = {lblResultDocumentName, lblResultWord, lblResultAparitions};
                 if (!textFieldSearch.getText().equals("")) {
-                    Indexing.textSearch(textFieldSearch.getText(), vBoxDocumentsResult, textFlow, btnOpenFile);
+                    Indexing.textSearch(textFieldSearch.getText(), vBoxDocumentsResult, textFlow, btnOpenFile, labels);
                 }else{ //Vacio
                     Dialogs.showErrorDialog("Failed", "The textfield is empty.");
                 }
