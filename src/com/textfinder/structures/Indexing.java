@@ -136,8 +136,6 @@ public class Indexing {
         }else{
             Dialogs.showErrorDialog("Failed", "Word not found");
         }
-
-
     }
 
     private static Button createButton(Occurrence pOccurrence, TextArea pTextArea, Button btnOpenFile){
@@ -146,92 +144,43 @@ public class Indexing {
 
         Button button = new Button(pOccurrence.getDocumentName());
         String finalPath = pOccurrence.getDocument().getAbsolutePath();
+        String finalText = "";
 
         if (DocumentLibrary.getFileExtension(pOccurrence.getDocument()).equals("pdf")) {
-
-            text = PDFManager.toText(pOccurrence.getDocument().getAbsolutePath());
-            String finalText = text;
-
-            button.setOnAction(new EventHandler<ActionEvent>() {
-                @Override
-                public void handle(ActionEvent event) {
-                    pTextArea.clear();
-                    pTextArea.appendText(finalText);
-                    btnOpenFile.setOnAction(new EventHandler<ActionEvent>() {
-                        @Override
-                        public void handle(ActionEvent event) {
-                            File file = new File(finalPath);
-                            Desktop desktop = Desktop.getDesktop();
-                            if(file.exists())         //checks file exists or not
-                            {
-                                try {
-                                    desktop.open(file);
-                                } catch (IOException e) {
-                                    e.printStackTrace();
-                                }
-                            }
-                        }
-                    });
-                }
-            });
+            finalText = PDFManager.getPlainText(pOccurrence.getDocument().getAbsolutePath());
         }
 
-        if(DocumentLibrary.getFileExtension(pOccurrence.getDocument()).equals("txt")) {
-
-            text = TXTManager.getPlainText(pOccurrence.getDocument().getAbsolutePath());
-            String finalText = text;
-            button.setOnAction(new EventHandler<ActionEvent>() {
-                @Override
-                public void handle(ActionEvent event) {
-                    pTextArea.clear();
-                    pTextArea.appendText(finalText);
-                    btnOpenFile.setOnAction(new EventHandler<ActionEvent>() {
-                        @Override
-                        public void handle(ActionEvent event) {
-                            File file = new File(finalPath);
-                            Desktop desktop = Desktop.getDesktop();
-                            if(file.exists())         //checks file exists or not
-                            {
-                                try {
-                                    desktop.open(file);
-                                } catch (IOException e) {
-                                    e.printStackTrace();
-                                }
-                            }
-                        }
-                    });
-                }
-            });
+        if (DocumentLibrary.getFileExtension(pOccurrence.getDocument()).equals("txt")) {
+            finalText = TXTManager.getPlainText(pOccurrence.getDocument().getAbsolutePath());;
         }
 
-        if(DocumentLibrary.getFileExtension(pOccurrence.getDocument()).equals("docx")) {
-            text = DOCXManager.getText(pOccurrence.getDocument().getAbsolutePath());
-            String finalText = text;
-            button.setOnAction(new EventHandler<ActionEvent>() {
-                @Override
-                public void handle(ActionEvent event) {
-                    pTextArea.clear();
-                    pTextArea.appendText(finalText);
-                    btnOpenFile.setOnAction(new EventHandler<ActionEvent>() {
-                        @Override
-                        public void handle(ActionEvent event) {
-                            File file = new File(finalPath);
-                            Desktop desktop = Desktop.getDesktop();
-                            if(file.exists())         //checks file exists or not
-                            {
-                                try {
-                                    desktop.open(file);
-                                } catch (IOException e) {
-                                    e.printStackTrace();
-                                }
-                            }
-                        }
-                    });
-                }
-            });
+        if (DocumentLibrary.getFileExtension(pOccurrence.getDocument()).equals("docx")) {
+            finalText = DOCXManager.getPlainText(pOccurrence.getDocument().getAbsolutePath());
         }
 
+        String finalText1 = finalText;
+        button.setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent event) {
+                pTextArea.clear();
+                pTextArea.appendText(finalText1);
+                btnOpenFile.setOnAction(new EventHandler<ActionEvent>() {
+                    @Override
+                    public void handle(ActionEvent event) {
+                        File file = new File(finalPath);
+                        Desktop desktop = Desktop.getDesktop();
+                        if(file.exists())         //checks file exists or not
+                        {
+                            try {
+                                desktop.open(file);
+                            } catch (IOException e) {
+                                e.printStackTrace();
+                            }
+                        }
+                    }
+                });
+            }
+        });
         return button;
-
     }
 }

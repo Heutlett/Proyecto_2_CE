@@ -62,4 +62,30 @@ public class PDFManager {
 
     }
 
+    public static String getPlainText(String pFilePath) {
+        try{
+            filePath = pFilePath;
+            pdfStripper = null;
+            pdDoc = null;
+            cosDoc = null;
+
+            file = new File(filePath);
+            parser = new PDFParser(new RandomAccessFile(file, "r")); // update for PDFBox V 2.0
+
+            parser.parse();
+            cosDoc = parser.getDocument();
+            pdfStripper = new PDFTextStripper();
+            pdDoc = new PDDocument(cosDoc);
+            pdDoc.getNumberOfPages();
+            pdfStripper.setStartPage(0);
+            pdfStripper.setEndPage(pdDoc.getNumberOfPages());
+            Text = pdfStripper.getText(pdDoc);
+            return Text;
+        }catch (IOException e){
+            Dialogs.showErrorDialog("Failed", "File not found");
+            return null;
+        }
+
+    }
+
 }
