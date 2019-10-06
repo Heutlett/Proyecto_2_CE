@@ -1,9 +1,12 @@
 package com.textfinder.structures;
 
+import java.security.Key;
+
 class BinarySearchTree {
 
     // Root of BST
     Node root;
+    KeyNode result;
 
     /* Class containing left and right child of current node and key value*/
     class Node {
@@ -85,6 +88,23 @@ class BinarySearchTree {
             }
             //System.out.println(root.key.getWord());
             inorderSearchWordRec(root.right,  pWord,  pOccurrence);
+        }
+    }
+
+    KeyNode searchWord(String pWord)  {
+        searchWordRec(root, pWord);
+        return result;
+    }
+
+    // A utility function to do inorder traversal of BST
+    void searchWordRec(Node root, String pWord) {
+        if (root != null) {
+            searchWordRec(root.left, pWord);
+            if(root.key.getWord().equals(pWord)){
+                result = root.key;
+                Dialogs.showInformationDialog("success", "WordFinded");
+            }
+            searchWordRec(root.right, pWord);
         }
     }
 

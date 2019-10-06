@@ -10,16 +10,23 @@ import javafx.geometry.Insets;
 import javafx.scene.Cursor;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
+import javafx.scene.control.Button;
+import javafx.scene.control.Label;
+import javafx.scene.control.ScrollPane;
+import javafx.scene.control.TextArea;
+import javafx.scene.control.TextField;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.*;
 import javafx.scene.text.Font;
 import javafx.stage.Stage;
 
+import java.awt.*;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 
 import javafx.scene.paint.Color;
+import org.apache.poi.ss.formula.functions.Index;
 
 import static com.textfinder.structures.Indexing.*;
 
@@ -34,15 +41,18 @@ public class Window extends Application {
     private VBox vBoxLibrary;
     private ArrayList<CheckBox> checkboxListLibraryFiles;
 
-    private Pane libraryResultPanel;
-    private ScrollPane scrollPaneLibraryResult;
-    private VBox vBoxLibraryResult;
-    private ArrayList<Button> buttonsLibraryResult;
+    private Pane documentsResultPanel;
+    private ScrollPane scrollPaneDocumentsResult;
+    private VBox vBoxDocumentsResult;
 
     private Pane resultPanel;
-
+    private TextArea textArea;
     private Pane searchPanel;
     private TextField textFieldSearch;
+
+    private static String fileName;
+
+    private Button btnOpenFile;
 
     public static void main(String[] args) throws IOException {
 
@@ -54,7 +64,6 @@ public class Window extends Application {
 
         DocumentLibrary.updateFileList();
         checkboxListLibraryFiles = new ArrayList<CheckBox>();
-        buttonsLibraryResult = new ArrayList<Button>();
 
         this.stage = stage;
         stage.setTitle("Text Finder");
@@ -65,10 +74,14 @@ public class Window extends Application {
         stage.setScene(new Scene(panel, 1360, 760));
 
         initLibraryPanel();
-        initLibraryResultPanel();
+        initDocumentsResultPanel();
         initResultPanel();
 
         stage.show();
+    }
+
+    public static void setFileName(String pFileName){
+        fileName = pFileName;
     }
 
     private void initLibraryPanel() {
@@ -241,14 +254,14 @@ public class Window extends Application {
 
     }
 
-    private void initLibraryResultPanel(){
+    private void initDocumentsResultPanel(){
 
-        libraryResultPanel = new Pane();
-        libraryResultPanel.setPrefSize(320, 760);
-        libraryResultPanel.setLayoutX(1040);
-        libraryResultPanel.setLayoutY(0);
-        libraryResultPanel.setBackground(new Background(new BackgroundFill(Color.rgb(233, 150, 122), CornerRadii.EMPTY, Insets.EMPTY)));
-        root.getChildren().add(libraryResultPanel);
+        documentsResultPanel = new Pane();
+        documentsResultPanel.setPrefSize(320, 760);
+        documentsResultPanel.setLayoutX(1040);
+        documentsResultPanel.setLayoutY(0);
+        documentsResultPanel.setBackground(new Background(new BackgroundFill(Color.rgb(233, 150, 122), CornerRadii.EMPTY, Insets.EMPTY)));
+        root.getChildren().add(documentsResultPanel);
 
         Label lblTitle = new Label("List of results");
         lblTitle.setLayoutX(69);
@@ -256,39 +269,53 @@ public class Window extends Application {
         lblTitle.setFont(new Font(30));
         lblTitle.setStyle("-fx-font-weight: bold;");
         lblTitle.setTextFill(Color.rgb(255, 255, 255));
-        libraryResultPanel.getChildren().add(lblTitle);
+        documentsResultPanel.getChildren().add(lblTitle);
 
         Label sortBy = new Label("Sort by");
         sortBy.setLayoutX(24);
         sortBy.setLayoutY(105);
         sortBy.setTextFill(Color.rgb(255, 255, 255));
-        libraryResultPanel.getChildren().add(sortBy);
+        documentsResultPanel.getChildren().add(sortBy);
 
         RadioButton radioButtonSortByName = new RadioButton("Name");
         radioButtonSortByName.setLayoutX(24);
         radioButtonSortByName.setLayoutY(140);
         radioButtonSortByName.setTextFill(Color.rgb(255, 255, 255));
-        libraryResultPanel.getChildren().add(radioButtonSortByName);
+        documentsResultPanel.getChildren().add(radioButtonSortByName);
 
         RadioButton radioButtonSortByDateCreated = new RadioButton("Date created");
         radioButtonSortByDateCreated.setLayoutX(24);
         radioButtonSortByDateCreated.setLayoutY(170);
         radioButtonSortByDateCreated.setTextFill(Color.rgb(255, 255, 255));
-        libraryResultPanel.getChildren().add(radioButtonSortByDateCreated);
+        documentsResultPanel.getChildren().add(radioButtonSortByDateCreated);
 
         RadioButton radioButtonSortBySize = new RadioButton("Size");
         radioButtonSortBySize.setLayoutX(24);
         radioButtonSortBySize.setLayoutY(200);
         radioButtonSortBySize.setTextFill(Color.rgb(255, 255, 255));
-        libraryResultPanel.getChildren().add(radioButtonSortBySize);
+        documentsResultPanel.getChildren().add(radioButtonSortBySize);
 
-        scrollPaneLibraryResult = new ScrollPane();
-        scrollPaneLibraryResult.setPrefSize(270, 439);
-        scrollPaneLibraryResult.setLayoutX(24);
-        scrollPaneLibraryResult.setLayoutY(305);
-        scrollPaneLibraryResult.setHbarPolicy(ScrollPane.ScrollBarPolicy.AS_NEEDED);
-        scrollPaneLibraryResult.setVbarPolicy(ScrollPane.ScrollBarPolicy.AS_NEEDED);
-        libraryResultPanel.getChildren().add(scrollPaneLibraryResult);
+        btnOpenFile = new Button();
+        btnOpenFile.setLayoutX(24);
+        btnOpenFile.setLayoutY(240);
+        btnOpenFile.setPrefSize(198, 31);
+        btnOpenFile.setText("Open File");
+        documentsResultPanel.getChildren().add(btnOpenFile);
+
+        scrollPaneDocumentsResult = new ScrollPane();
+        scrollPaneDocumentsResult.setPrefSize(270, 439);
+        scrollPaneDocumentsResult.setLayoutX(24);
+        scrollPaneDocumentsResult.setLayoutY(305);
+        scrollPaneDocumentsResult.setHbarPolicy(ScrollPane.ScrollBarPolicy.AS_NEEDED);
+        scrollPaneDocumentsResult.setVbarPolicy(ScrollPane.ScrollBarPolicy.AS_NEEDED);
+        documentsResultPanel.getChildren().add(scrollPaneDocumentsResult);
+
+        vBoxDocumentsResult = new VBox();
+        vBoxDocumentsResult.setPrefSize(251, 100);
+        scrollPaneDocumentsResult.setContent(vBoxDocumentsResult);
+
+
+        //Llamar funcion para re indexar todoo
 
     }
 
@@ -300,6 +327,13 @@ public class Window extends Application {
         resultPanel.setLayoutY(84);
         resultPanel.setBackground(new Background(new BackgroundFill(Color.rgb(255, 220, 192), CornerRadii.EMPTY, Insets.EMPTY)));
         root.getChildren().add(resultPanel);
+
+        textArea = new TextArea();
+        textArea.setPrefSize(706, 665);
+        textArea.setEditable(false);
+        textArea.setLayoutX(5);
+        textArea.setLayoutY(5);
+        resultPanel.getChildren().add(textArea);
 
         searchPanel = new Pane();
         searchPanel.setPrefSize(716,82);
@@ -318,6 +352,16 @@ public class Window extends Application {
         Button btnSearch = new Button("Search");
         btnSearch.setLayoutX(594);
         btnSearch.setLayoutY(26);
+        btnSearch.setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent event) {
+                if (!textFieldSearch.getText().equals("")) {
+                    Indexing.textSearch(textFieldSearch.getText(), vBoxDocumentsResult, textArea, btnOpenFile);
+                }else{ //Vacio
+                    Dialogs.showErrorDialog("Failed", "The textfield is empty.");
+                }
+            }
+        });
         searchPanel.getChildren().add(btnSearch);
 
     }

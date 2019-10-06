@@ -25,4 +25,22 @@ public class TXTManager {
 
      }
 
+     public static String getPlainText(String pPath){
+
+         try {
+             Scanner file = new Scanner(new File(pPath));
+
+             String text = "";
+
+             while (file.hasNext()){
+                 text += file.nextLine() + "\n";
+             }
+             return text;
+
+         }catch (IOException e){
+             return null;
+         }
+
+     }
+
 }
