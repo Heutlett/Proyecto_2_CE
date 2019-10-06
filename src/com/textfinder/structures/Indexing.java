@@ -12,6 +12,7 @@ import javafx.scene.control.TextArea;
 import javafx.scene.layout.VBox;
 import javafx.scene.text.Text;
 import javafx.scene.text.TextFlow;
+import javafx.scene.paint.Color;
 
 import java.awt.*;
 import java.io.File;
@@ -123,8 +124,6 @@ public class Indexing {
         System.out.println("Buscando la palabra: " + pWord);
         KeyNode node = binarySearchTree.searchWord(pWord);
 
-
-
         if (node != null) {
             System.out.println("Se encontraron " + node.getOccurrenceList().size() + " resultados");
             for (int i = 0; i < node.getOccurrenceList().size(); i++) {
@@ -161,18 +160,32 @@ public class Indexing {
             finalText = DOCXManager.getPlainText(pOccurrence.getDocument().getAbsolutePath());
         }
 
+        ArrayList<Text> texts = new ArrayList<Text>();
+        Text text1 = new Text(finalText.substring(0,5));
+        text1.setFill(Color.DARKBLUE);
+        Text text2 = new Text(finalText.substring(5,10));
+        text2.setFill(Color.RED);
+        Text text3 = new Text(finalText.substring(10,15));
+        text3.setFill(Color.GREEN);
+        texts.add(text1);
+        texts.add(text2);
+        texts.add(text3);
+
+
         String finalText1 = finalText;
         button.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent event) {
                 pTextFlow.getChildren().clear();
-                pTextFlow.getChildren().add(new Text(finalText1));
+                pTextFlow.getChildren().add(texts.get(0));
+                pTextFlow.getChildren().add(texts.get(1));
+                pTextFlow.getChildren().add(texts.get(2));
                 btnOpenFile.setOnAction(new EventHandler<ActionEvent>() {
                     @Override
                     public void handle(ActionEvent event) {
                         File file = new File(finalPath);
                         Desktop desktop = Desktop.getDesktop();
-                        if(file.exists())         //checks file exists or not
+                        if(file.exists())//checks file exists or not
                         {
                             try {
                                 desktop.open(file);
