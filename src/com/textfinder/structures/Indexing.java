@@ -10,6 +10,8 @@ import javafx.event.EventHandler;
 import javafx.scene.control.Button;
 import javafx.scene.control.TextArea;
 import javafx.scene.layout.VBox;
+import javafx.scene.text.Text;
+import javafx.scene.text.TextFlow;
 
 import java.awt.*;
 import java.io.File;
@@ -104,11 +106,11 @@ public class Indexing {
         }
     }
 
-    public static void textSearch(String pText, VBox pVBox, TextArea pTextArea, Button btnOpenFile) {
+    public static void textSearch(String pText, VBox pVBox, TextFlow pTextFlow, Button btnOpenFile) {
 
         if (pText.split(" ").length == 1) {//Una palabra
 
-            wordSearch(pText, pVBox, pTextArea, btnOpenFile);
+            wordSearch(pText, pVBox, pTextFlow, btnOpenFile);
 
         } else { //Una frase
 
@@ -116,7 +118,7 @@ public class Indexing {
 
     }
 
-    private static void wordSearch(String pWord, VBox pVBox, TextArea pTextArea, Button btnOpenFile) {
+    private static void wordSearch(String pWord, VBox pVBox, TextFlow pTextFlow, Button btnOpenFile) {
 
         System.out.println("Buscando la palabra: " + pWord);
         KeyNode node = binarySearchTree.searchWord(pWord);
@@ -127,7 +129,7 @@ public class Indexing {
             System.out.println("Se encontraron " + node.getOccurrenceList().size() + " resultados");
             for (int i = 0; i < node.getOccurrenceList().size(); i++) {
 
-                Button button = createButton(node.getOccurrenceList().get(i), pTextArea, btnOpenFile);
+                Button button = createButton(node.getOccurrenceList().get(i), pTextFlow, btnOpenFile);
                 button.setId(node.getOccurrenceList().get(i).getDocument().getAbsolutePath());
                 pVBox.getChildren().add(button);
 
@@ -139,7 +141,7 @@ public class Indexing {
         }
     }
 
-    private static Button createButton(Occurrence pOccurrence, TextArea pTextArea, Button btnOpenFile){
+    private static Button createButton(Occurrence pOccurrence, TextFlow pTextFlow, Button btnOpenFile){
 
         String text = "";
 
@@ -163,8 +165,8 @@ public class Indexing {
         button.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent event) {
-                pTextArea.clear();
-                pTextArea.appendText(finalText1);
+                pTextFlow.getChildren().clear();
+                pTextFlow.getChildren().add(new Text(finalText1));
                 btnOpenFile.setOnAction(new EventHandler<ActionEvent>() {
                     @Override
                     public void handle(ActionEvent event) {
