@@ -128,6 +128,7 @@ public class Indexing {
             for (int i = 0; i < node.getOccurrenceList().size(); i++) {
 
                 Button button = createButton(node.getOccurrenceList().get(i), pTextArea, btnOpenFile);
+                button.setId(node.getOccurrenceList().get(i).getDocument().getAbsolutePath());
                 pVBox.getChildren().add(button);
 
             }
@@ -183,4 +184,6 @@ public class Indexing {
         });
         return button;
     }
+
+
 }
