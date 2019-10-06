@@ -4,13 +4,14 @@ import com.textfinder.documentlibrary.DocumentLibrary;
 import com.textfinder.filemanagers.DOCXManager;
 import com.textfinder.filemanagers.PDFManager;
 import com.textfinder.filemanagers.TXTManager;
-import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.scene.Node;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.layout.VBox;
+import javafx.scene.text.FontPosture;
+import javafx.scene.text.FontWeight;
 import javafx.scene.text.Text;
 import javafx.scene.text.TextFlow;
 import javafx.scene.paint.Color;
@@ -19,6 +20,10 @@ import java.awt.*;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
+import javafx.scene.text.Font;
+import javafx.scene.text.FontPosture;
+import javafx.scene.text.FontWeight;
+import javafx.scene.text.Text;
 
 public class Indexing {
 
@@ -197,8 +202,14 @@ public class Indexing {
 
             if(e + pWordSearched.length()<= finalText.length() && finalText.substring(e, e + pWordSearched.length()).equals(pWordSearched) ) {
                 text = new Text(pWordSearched + " ");
-                text.setFill(Color.RED);
-                text.setUnderline(true);
+                text.setFill(Color.YELLOW);
+                text.setFont(Font.font("verdana", FontWeight.BOLD, FontPosture.REGULAR, 19));
+
+                //Setting the Stroke
+                text.setStrokeWidth(1);
+
+                // Setting the stroke color
+                text.setStroke(Color.BLACK);
                 e = e + pWordSearched.length();
             }else{
                 text = new Text(""+finalText.charAt(e));
