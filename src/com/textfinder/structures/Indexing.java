@@ -91,17 +91,41 @@ public class Indexing {
 
             if (!words[i].equals("") && !words[i].equals("\n") && !words[i].equals(" ")) {
                 //Crea el occurrence de cada palabra
-                Occurrence occurrence = new Occurrence(pFile, pFile.getName(), counter);
+
+                Occurrence occurrence = new Occurrence(pFile, pFile.getName());
+
                 counter++;
-                //Si la palabra ya se habia agregado al indexado
-                if (!Indexing.words.contains(words[i])) {
+                KeyNode node = binarySearchTree.searchWord(words[i]);
+                boolean added = false;
+
+                if(node != null){
+
+                    for(int e = 0; e < node.getOccurrenceList().size(); e++){
+
+                        if(node.getOccurrenceList().get(e).getDocumentName().equals(pFile.getName())){
+
+                            node.getOccurrenceList().get(e).addPositions(counter);
+                            added = true;
+                        }
+
+                    }
+                    if(!added){
+
+                        occurrence.addPositions(counter);
+                        node.getOccurrenceList().add(occurrence);
+
+                    }
+
+                }else{
+
+                    occurrence.addPositions(counter);
                     Indexing.words.add(words[i]);
                     OccurrenceLinkedList occurrenceLinkedList = new OccurrenceLinkedList();
                     occurrenceLinkedList.add(occurrence);
                     binarySearchTree.insert(new KeyNode(words[i], occurrenceLinkedList));
-                } else { //Si la palabra ya estaba indexada solo agrega la ocurrencia
-                    binarySearchTree.inorderSearchWord(words[i], occurrence);
+
                 }
+
             }
 
         }
@@ -127,6 +151,8 @@ public class Indexing {
         if (node != null) {
             System.out.println("Se encontraron " + node.getOccurrenceList().size() + " resultados");
             for (int i = 0; i < node.getOccurrenceList().size(); i++) {
+
+
 
                 Button button = createButton(node.getOccurrenceList().get(i), pTextFlow, btnOpenFile);
                 button.setId(node.getOccurrenceList().get(i).getDocument().getAbsolutePath());
@@ -164,12 +190,14 @@ public class Indexing {
         Text text1 = new Text(finalText.substring(0,5));
         text1.setFill(Color.DARKBLUE);
         Text text2 = new Text(finalText.substring(5,10));
-        text2.setFill(Color.RED);
+        text1.setFill(Color.RED);
         Text text3 = new Text(finalText.substring(10,15));
-        text3.setFill(Color.GREEN);
+        text1.setFill(Color.DARKBLUE);
         texts.add(text1);
         texts.add(text2);
         texts.add(text3);
+
+
 
 
         String finalText1 = finalText;
