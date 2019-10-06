@@ -4,11 +4,12 @@ import com.textfinder.documentlibrary.DocumentLibrary;
 import com.textfinder.filemanagers.DOCXManager;
 import com.textfinder.filemanagers.PDFManager;
 import com.textfinder.filemanagers.TXTManager;
-import com.textfinder.view.Window;
+import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
+import javafx.scene.Node;
 import javafx.scene.control.Button;
-import javafx.scene.control.TextArea;
+import javafx.scene.control.Label;
 import javafx.scene.layout.VBox;
 import javafx.scene.text.Text;
 import javafx.scene.text.TextFlow;
@@ -17,8 +18,6 @@ import javafx.scene.paint.Color;
 import java.awt.*;
 import java.io.File;
 import java.io.IOException;
-import java.lang.reflect.Array;
-import java.security.Key;
 import java.util.ArrayList;
 
 public class Indexing {
@@ -27,6 +26,7 @@ public class Indexing {
     private static BinarySearchTree binarySearchTree;
     private static ArrayList<String> words;
     private static int wordsIndexed = 0;
+    private static Label[] labels;
     //private static
 
     private Indexing() {
@@ -52,7 +52,7 @@ public class Indexing {
 
         }
 
-        binarySearchTree.inorder();
+        binarySearchTree.inorderPrint();
 
         Dialogs.showInformationDialog("Success", wordsIndexed + " words have been indexed");
 
@@ -131,7 +131,9 @@ public class Indexing {
         }
     }
 
-    public static void textSearch(String pText, VBox pVBox, TextFlow pTextFlow, Button btnOpenFile) {
+    public static void textSearch(String pText, VBox pVBox, TextFlow pTextFlow, Button btnOpenFile, Label[] pLabels) {
+
+        labels = pLabels;
 
         if (pText.split(" ").length == 1) {//Una palabra
 
@@ -147,67 +149,79 @@ public class Indexing {
 
         System.out.println("Buscando la palabra: " + pWord);
         KeyNode node = binarySearchTree.searchWord(pWord);
+        pVBox.getChildren().clear();
 
         if (node != null) {
             System.out.println("Se encontraron " + node.getOccurrenceList().size() + " resultados");
             for (int i = 0; i < node.getOccurrenceList().size(); i++) {
 
-
-
-                Button button = createButton(node.getOccurrenceList().get(i), pTextFlow, btnOpenFile);
+                Button button = createButton(node.getOccurrenceList().get(i), pTextFlow, btnOpenFile, pWord);
                 button.setId(node.getOccurrenceList().get(i).getDocument().getAbsolutePath());
                 pVBox.getChildren().add(button);
 
             }
-
 
         }else{
             Dialogs.showErrorDialog("Failed", "Word not found");
         }
     }
 
-    private static Button createButton(Occurrence pOccurrence, TextFlow pTextFlow, Button btnOpenFile){
+    private static String getText(File pFile){
 
-        String text = "";
+        if (DocumentLibrary.getFileExtension(pFile).equals("pdf")) {
+            return PDFManager.getPlainText(pFile.getAbsolutePath());
+        }
+
+        if (DocumentLibrary.getFileExtension(pFile).equals("txt")) {
+            return TXTManager.getPlainText(pFile.getAbsolutePath());
+        }
+
+        if (DocumentLibrary.getFileExtension(pFile).equals("docx")) {
+            return DOCXManager.getPlainText(pFile.getAbsolutePath());
+        }
+        return null;
+
+    }
+
+    private static Button createButton(Occurrence pOccurrence, TextFlow pTextFlow, Button btnOpenFile, String pWordSearched){
 
         Button button = new Button(pOccurrence.getDocumentName());
         String finalPath = pOccurrence.getDocument().getAbsolutePath();
-        String finalText = "";
+        String finalText = getText(pOccurrence.getDocument());
 
-        if (DocumentLibrary.getFileExtension(pOccurrence.getDocument()).equals("pdf")) {
-            finalText = PDFManager.getPlainText(pOccurrence.getDocument().getAbsolutePath());
+        ArrayList<Node> nodes = new ArrayList<Node>();
+
+        for(int e = 0; e < finalText.length(); e++){
+
+            Text text;
+
+            if(e + pWordSearched.length()<= finalText.length() && finalText.substring(e, e + pWordSearched.length()).equals(pWordSearched) ) {
+                text = new Text(pWordSearched + " ");
+                text.setFill(Color.RED);
+                text.setUnderline(true);
+                e = e + pWordSearched.length();
+            }else{
+                text = new Text(""+finalText.charAt(e));
+                text.setFill(Color.BLACK);
+            }
+
+            nodes.add(text);
         }
 
-        if (DocumentLibrary.getFileExtension(pOccurrence.getDocument()).equals("txt")) {
-            finalText = TXTManager.getPlainText(pOccurrence.getDocument().getAbsolutePath());;
-        }
 
-        if (DocumentLibrary.getFileExtension(pOccurrence.getDocument()).equals("docx")) {
-            finalText = DOCXManager.getPlainText(pOccurrence.getDocument().getAbsolutePath());
-        }
-
-        ArrayList<Text> texts = new ArrayList<Text>();
-        Text text1 = new Text(finalText.substring(0,5));
-        text1.setFill(Color.DARKBLUE);
-        Text text2 = new Text(finalText.substring(5,10));
-        text1.setFill(Color.RED);
-        Text text3 = new Text(finalText.substring(10,15));
-        text1.setFill(Color.DARKBLUE);
-        texts.add(text1);
-        texts.add(text2);
-        texts.add(text3);
-
-
-
-
-        String finalText1 = finalText;
         button.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent event) {
                 pTextFlow.getChildren().clear();
-                pTextFlow.getChildren().add(texts.get(0));
-                pTextFlow.getChildren().add(texts.get(1));
-                pTextFlow.getChildren().add(texts.get(2));
+
+                clearLabels();
+
+                updateLabels(pOccurrence.getDocumentName(), pWordSearched, ""+pOccurrence.getPosition().size());
+
+                for (int i = 0; i < nodes.size(); i++) {
+                    pTextFlow.getChildren().add(nodes.get(i));
+                }
+
                 btnOpenFile.setOnAction(new EventHandler<ActionEvent>() {
                     @Override
                     public void handle(ActionEvent event) {
@@ -226,6 +240,19 @@ public class Indexing {
             }
         });
         return button;
+    }
+
+    private static void updateLabels(String pDocumentName, String pWord, String pAparitions){
+
+        labels[0].setText(labels[0].getText()+pDocumentName);
+        labels[1].setText(labels[1].getText()+pWord);
+        labels[2].setText(labels[2].getText()+pAparitions);
+    }
+
+    private static void clearLabels(){
+        labels[0].setText("Document: ");
+        labels[1].setText("Word: ");
+        labels[2].setText("Aparitions: ");
     }
 
 
