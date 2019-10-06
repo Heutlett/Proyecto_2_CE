@@ -1,17 +1,17 @@
 package com.textfinder.structures;
 
 import java.io.File;
+import java.util.ArrayList;
 
 public class Occurrence {
 
     private File document;
     private String documentName;
-    private int position;
+    private ArrayList<Integer> positions = new ArrayList<Integer>();
 
-    public Occurrence(File document, String documentName, int position) {
+    public Occurrence(File document, String documentName) {
         this.document = document;
         this.documentName = documentName;
-        this.position = position;
     }
 
     public File getDocument() {
@@ -30,16 +30,16 @@ public class Occurrence {
         this.documentName = documentName;
     }
 
-    public int getPosition() {
-        return position;
+    public ArrayList<Integer> getPosition() {
+        return positions;
     }
 
-    public void setPosition(int position) {
-        this.position = position;
+    public void addPositions(int position) {
+        this.positions.add(position);
     }
 
     public String toString(){
-        return "File=" +documentName  + " Position=" + position;
+        return "File=" +documentName  + " Position=" + this.positions.toString();
     }
 
 }

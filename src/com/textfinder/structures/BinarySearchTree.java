@@ -91,7 +91,33 @@ class BinarySearchTree {
         }
     }
 
+    // This method mainly calls InorderRec()
+    Occurrence getOcurrenceByFile(String pWord, String pFile)  {
+        Occurrence o = new Occurrence(null, null);
+        return getOcurrenceByFileRec(root, pWord, pFile, o);
+    }
+
+    // A utility function to do inorder traversal of BST
+    Occurrence getOcurrenceByFileRec(Node root, String pWord, String pFile, Occurrence o) {
+        if (root != null) {
+            getOcurrenceByFileRec(root.left, pWord, pFile, o);
+
+            for(int e = 0; e < root.key.getOccurrenceList().size(); e++){
+                if(root.key.getWord().equals(pWord) && pFile.equals(root.key.getOccurrenceList().get(e).getDocumentName())){
+                    o = root.key.getOccurrenceList().get(e);
+                    //return root.key.getOccurrenceList().get(e);
+                }
+            }
+
+            //System.out.println(root.key.getWord());
+            getOcurrenceByFileRec(root.right, pWord, pFile, o);
+        }
+        return o;
+    }
+
+
     KeyNode searchWord(String pWord)  {
+        result = null;
         searchWordRec(root, pWord);
         return result;
     }
@@ -102,7 +128,7 @@ class BinarySearchTree {
             searchWordRec(root.left, pWord);
             if(root.key.getWord().equals(pWord)){
                 result = root.key;
-                Dialogs.showInformationDialog("success", "WordFinded");
+                //Dialogs.showInformationDialog("success", "WordFinded");
             }
             searchWordRec(root.right, pWord);
         }
