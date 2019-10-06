@@ -4,7 +4,6 @@ import com.textfinder.documentlibrary.DocumentLibrary;
 import com.textfinder.structures.Dialogs;
 import com.textfinder.structures.Indexing;
 import javafx.application.Application;
-import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.geometry.Insets;
@@ -19,20 +18,17 @@ import javafx.scene.control.TextField;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.*;
 import javafx.scene.text.Font;
+import javafx.scene.text.TextAlignment;
+import javafx.scene.text.TextFlow;
 import javafx.stage.Stage;
 
-import java.awt.*;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.attribute.BasicFileAttributes;
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Comparator;
-import java.util.Observable;
 
 import javafx.scene.paint.Color;
-import org.apache.poi.ss.formula.functions.Index;
 
 import static com.textfinder.structures.Indexing.*;
 
@@ -52,7 +48,7 @@ public class Window extends Application {
     private VBox vBoxDocumentsResult;
 
     private Pane resultPanel;
-    private TextArea textArea;
+    private TextFlow textFlow;
     private Pane searchPanel;
     private TextField textFieldSearch;
 
@@ -389,12 +385,14 @@ public class Window extends Application {
         resultPanel.setBackground(new Background(new BackgroundFill(Color.rgb(255, 220, 192), CornerRadii.EMPTY, Insets.EMPTY)));
         root.getChildren().add(resultPanel);
 
-        textArea = new TextArea();
-        textArea.setPrefSize(706, 665);
-        textArea.setEditable(false);
-        textArea.setLayoutX(5);
-        textArea.setLayoutY(5);
-        resultPanel.getChildren().add(textArea);
+        textFlow = new TextFlow();
+        textFlow.setPrefSize(706, 665);
+        textFlow.setLayoutX(5);
+        textFlow.setLayoutY(5);
+        textFlow.setTextAlignment(TextAlignment.JUSTIFY);
+        textFlow.setLineSpacing(5.0);
+        textFlow.setBackground(new Background(new BackgroundFill(Color.rgb(255, 255, 255), CornerRadii.EMPTY, Insets.EMPTY)));
+        resultPanel.getChildren().add(textFlow);
 
         searchPanel = new Pane();
         searchPanel.setPrefSize(716,82);
@@ -417,7 +415,7 @@ public class Window extends Application {
             @Override
             public void handle(ActionEvent event) {
                 if (!textFieldSearch.getText().equals("")) {
-                    Indexing.textSearch(textFieldSearch.getText(), vBoxDocumentsResult, textArea, btnOpenFile);
+                    Indexing.textSearch(textFieldSearch.getText(), vBoxDocumentsResult, textFlow, btnOpenFile);
                 }else{ //Vacio
                     Dialogs.showErrorDialog("Failed", "The textfield is empty.");
                 }
