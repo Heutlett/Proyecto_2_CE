@@ -42,7 +42,6 @@ public class PDFManager {
         pdfStripper.setEndPage(pdDoc.getNumberOfPages());
         Text = pdfStripper.getText(pdDoc);
 
-
         String textFinal = "";
 
         for(int i = 0; i < Text.length(); i++){
@@ -50,7 +49,7 @@ public class PDFManager {
                 textFinal += Text.charAt(i);
             }
         }
-        System.out.println(textFinal);
+        
         return textFinal;
     }
 
