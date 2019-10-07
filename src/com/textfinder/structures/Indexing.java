@@ -10,21 +10,19 @@ import javafx.scene.Node;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.layout.VBox;
-import javafx.scene.text.FontPosture;
-import javafx.scene.text.FontWeight;
-import javafx.scene.text.Text;
-import javafx.scene.text.TextFlow;
 import javafx.scene.paint.Color;
-
+import javafx.scene.text.Font;
+import javafx.scene.text.*;
 import java.awt.*;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
-import javafx.scene.text.Font;
-import javafx.scene.text.FontPosture;
-import javafx.scene.text.FontWeight;
-import javafx.scene.text.Text;
 
+/**
+ * @author Adrian Araya Ramirez
+ * @author Daniel Quesada Camacho
+ * @version 1.8
+ */
 public class Indexing {
 
     private static final Indexing INSTANCE = new Indexing();
@@ -32,37 +30,44 @@ public class Indexing {
     private static ArrayList<String> words;
     private static int wordsIndexed = 0;
     private static Label[] labels;
-    //private static
 
+    /**
+     * Constructor
+     */
     private Indexing() {
         binarySearchTree = new BinarySearchTree();
         words = new ArrayList<String>();
     }
 
+    /**
+     * Retorna la instancia unica de la clase (singleton)
+     * @return Indexing
+     */
     public Indexing getInstance() {
         return INSTANCE;
     }
 
+    /**
+     * Parsea los documentos.
+     */
     public static void parseDocuments() {
 
         binarySearchTree = new BinarySearchTree();
-
         wordsIndexed = 0;
 
-        //Recorre la lista de archivos buscando los pdf y parseandolos e indexandolos
         for (int i = 0; i < DocumentLibrary.files.size(); i++) {
-
-
             parseFile(DocumentLibrary.files.get(i));
-
         }
 
         binarySearchTree.inorderPrint();
-
         Dialogs.showInformationDialog("Success", wordsIndexed + " words have been indexed");
-
     }
 
+    /**
+     * Devuelve un arreglo con las palabras del documento
+     * @param pFile
+     * @return String[]
+     */
     private static String[] getWords(File pFile) {
 
         String text = "";
@@ -83,11 +88,13 @@ public class Indexing {
         return text.split(" ");
     }
 
-    //Divide un pdf en palabras y las almacena en la lista words
+    /**
+     * Indexa todas las palabras en el arbol binario de busqueda
+     * @param pFile
+     */
     private static void parseFile(File pFile) {
 
         String words[] = getWords(pFile);
-
         int counter = 0;
 
         for (int i = 0; i < words.length; i++) {
@@ -95,16 +102,13 @@ public class Indexing {
             wordsIndexed++;
 
             if (!words[i].equals("") && !words[i].equals("\n") && !words[i].equals(" ")) {
-                //Crea el occurrence de cada palabra
 
                 Occurrence occurrence = new Occurrence(pFile, pFile.getName());
-
                 counter++;
                 KeyNode node = binarySearchTree.searchWord(words[i]);
                 boolean added = false;
 
                 if(node != null){
-
                     for(int e = 0; e < node.getOccurrenceList().size(); e++){
 
                         if(node.getOccurrenceList().get(e).getDocumentName().equals(pFile.getName())){
@@ -112,30 +116,30 @@ public class Indexing {
                             node.getOccurrenceList().get(e).addPositions(counter);
                             added = true;
                         }
-
                     }
                     if(!added){
-
                         occurrence.addPositions(counter);
                         node.getOccurrenceList().add(occurrence);
-
                     }
-
                 }else{
-
                     occurrence.addPositions(counter);
                     Indexing.words.add(words[i]);
                     OccurrenceLinkedList occurrenceLinkedList = new OccurrenceLinkedList();
                     occurrenceLinkedList.add(occurrence);
                     binarySearchTree.insert(new KeyNode(words[i], occurrenceLinkedList));
-
                 }
-
             }
-
         }
     }
 
+    /**
+     * Busca la palabra en el arbol binario de busqueda
+     * @param pText
+     * @param pVBox
+     * @param pTextFlow
+     * @param btnOpenFile
+     * @param pLabels
+     */
     public static void textSearch(String pText, VBox pVBox, TextFlow pTextFlow, Button btnOpenFile, Label[] pLabels) {
 
         labels = pLabels;
@@ -147,9 +151,15 @@ public class Indexing {
         } else { //Una frase
 
         }
-
     }
 
+    /**
+     * Agrega los documentos que contienen la palabra buscada en la lista de documentos resultantes.
+     * @param pWord
+     * @param pVBox
+     * @param pTextFlow
+     * @param btnOpenFile
+     */
     private static void wordSearch(String pWord, VBox pVBox, TextFlow pTextFlow, Button btnOpenFile) {
 
         System.out.println("Buscando la palabra: " + pWord);
@@ -163,7 +173,6 @@ public class Indexing {
                 Button button = createButton(node.getOccurrenceList().get(i), pTextFlow, btnOpenFile, pWord);
                 button.setId(node.getOccurrenceList().get(i).getDocument().getAbsolutePath());
                 pVBox.getChildren().add(button);
-
             }
 
         }else{
@@ -171,6 +180,11 @@ public class Indexing {
         }
     }
 
+    /**
+     * Obtiene el texto de los archivos resultantes.
+     * @param pFile
+     * @return
+     */
     private static String getText(File pFile){
 
         if (DocumentLibrary.getFileExtension(pFile).equals("pdf")) {
@@ -188,6 +202,14 @@ public class Indexing {
 
     }
 
+    /**
+     * Crea y le da la funcion a los botones que abriran los documentos y mostraran los resultados de las palabras subrayadas.
+     * @param pOccurrence
+     * @param pTextFlow
+     * @param btnOpenFile
+     * @param pWordSearched
+     * @return
+     */
     private static Button createButton(Occurrence pOccurrence, TextFlow pTextFlow, Button btnOpenFile, String pWordSearched){
 
         Button button = new Button(pOccurrence.getDocumentName());
@@ -219,14 +241,27 @@ public class Indexing {
             nodes.add(text);
         }
 
+        addAction(button,pOccurrence,pTextFlow,btnOpenFile,pWordSearched,nodes,finalPath);
 
-        button.setOnAction(new EventHandler<ActionEvent>() {
+        return button;
+    }
+
+    /**
+     * Agrega las funciones al boton del documento resultante
+     * @param pButton
+     * @param pOccurrence
+     * @param pTextFlow
+     * @param btnOpenFile
+     * @param pWordSearched
+     * @param nodes
+     * @param finalPath
+     */
+    private static void addAction(Button pButton, Occurrence pOccurrence, TextFlow pTextFlow, Button btnOpenFile, String pWordSearched, ArrayList<Node> nodes, String finalPath){
+        pButton.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent event) {
                 pTextFlow.getChildren().clear();
-
                 clearLabels();
-
                 updateLabels(pOccurrence.getDocumentName(), pWordSearched, ""+pOccurrence.getPosition().size());
 
                 for (int i = 0; i < nodes.size(); i++) {
@@ -250,21 +285,26 @@ public class Indexing {
                 });
             }
         });
-        return button;
     }
 
+    /**
+     * Actualiza los labels que muestran la informacion de la busqueda.
+     * @param pDocumentName
+     * @param pWord
+     * @param pAparitions
+     */
     private static void updateLabels(String pDocumentName, String pWord, String pAparitions){
-
         labels[0].setText(labels[0].getText()+pDocumentName);
         labels[1].setText(labels[1].getText()+pWord);
         labels[2].setText(labels[2].getText()+pAparitions);
     }
 
+    /**
+     * Limpia la informacion de los labels de busqueda.
+     */
     private static void clearLabels(){
         labels[0].setText("Document: ");
         labels[1].setText("Word: ");
         labels[2].setText("Aparitions: ");
     }
-
-
 }

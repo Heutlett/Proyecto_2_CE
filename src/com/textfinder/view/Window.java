@@ -10,67 +10,80 @@ import javafx.geometry.Insets;
 import javafx.scene.Cursor;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
-import javafx.scene.control.Button;
-import javafx.scene.control.Label;
-import javafx.scene.control.ScrollPane;
-import javafx.scene.control.TextArea;
-import javafx.scene.control.TextField;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.*;
+import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
 import javafx.scene.text.TextAlignment;
 import javafx.scene.text.TextFlow;
 import javafx.stage.Stage;
 
+import javax.swing.*;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.attribute.BasicFileAttributes;
 import java.util.ArrayList;
+import static com.textfinder.structures.Indexing.parseDocuments;
 
-import javafx.scene.paint.Color;
-
-import static com.textfinder.structures.Indexing.*;
-
-
+/**
+ * @author Adrian Araya Ramirez
+ * @author Daniel
+ *
+ * @version 1.8
+ */
 public class Window extends Application {
 
     private Stage stage;
     private Pane root;
-
     private Pane libraryPanel;
     private ScrollPane scrollPaneLibrary;
     private VBox vBoxLibrary;
     private ArrayList<CheckBox> checkboxListLibraryFiles;
-
     private Pane documentsResultPanel;
     private ScrollPane scrollPaneDocumentsResult;
     private VBox vBoxDocumentsResult;
-
     private Pane resultPanel;
     private TextFlow textFlow;
     private Pane searchPanel;
     private TextField textFieldSearch;
-
     private RadioButton radioButtonSortByName;
     private RadioButton radioButtonSortByDateCreated;
     private RadioButton radioButtonSortBySize;
-
-    private static String fileName;
-
     private Label lblResultDocumentName;
     private Label lblResultWord;
     private Label lblResultAparitions;
-
     private Button btnOpenFile;
+    private RadioButton radioButtonByWord;
+    private RadioButton radioButtonByPhrase;
 
+    /**
+     * Main del programa
+     * @param args
+     * @throws IOException
+     */
     public static void main(String[] args) throws IOException {
-
         launch(args);
     }
 
+    /**
+     *
+     * @param file
+     * @return
+     */
+    public static long getFileCreationEpoch(File file) {
+        try {
+            BasicFileAttributes attr = Files.readAttributes(file.toPath(),
+                    BasicFileAttributes.class);
+            return attr.creationTime()
+                    .toInstant().toEpochMilli();
+        } catch (IOException e) {
+            throw new RuntimeException(file.getAbsolutePath(), e);
+        }
+    }
+
     @Override
-    public void start(Stage stage){
+    public void start(Stage stage) {
 
         DocumentLibrary.updateFileList();
         checkboxListLibraryFiles = new ArrayList<CheckBox>();
@@ -88,10 +101,6 @@ public class Window extends Application {
         initResultPanel();
 
         stage.show();
-    }
-
-    public static void setFileName(String pFileName){
-        fileName = pFileName;
     }
 
     private void initLibraryPanel() {
@@ -217,7 +226,7 @@ public class Window extends Application {
         updateCheckBox();
     }
 
-    private void updateCheckBox(){
+    private void updateCheckBox() {
         vBoxLibrary = new VBox();
         vBoxLibrary.setPrefSize(251, 100);
         checkboxListLibraryFiles = new ArrayList<CheckBox>();
@@ -232,39 +241,39 @@ public class Window extends Application {
         //Llamar funcion para re indexar todoo.
     }
 
-    private void removeCheckBoxFiles(){
+    private void removeCheckBoxFiles() {
 
         String success = "";
         String failed = "";
         String finalText = "";
 
-        for(int i = 0; i < checkboxListLibraryFiles.size(); i++){
+        for (int i = 0; i < checkboxListLibraryFiles.size(); i++) {
 
-            if(checkboxListLibraryFiles.get(i).isSelected()){
+            if (checkboxListLibraryFiles.get(i).isSelected()) {
                 vBoxLibrary.getChildren().remove(i);
 
-                if(DocumentLibrary.deleteFile(checkboxListLibraryFiles.get(i).getText())){
+                if (DocumentLibrary.deleteFile(checkboxListLibraryFiles.get(i).getText())) {
                     success += checkboxListLibraryFiles.get(i).getText() + "\n";
-                }else{
+                } else {
                     failed += checkboxListLibraryFiles.get(i).getText() + "\n";
                 }
                 checkboxListLibraryFiles.remove(i);
                 i--;
             }
         }
-        if(success != ""){
+        if (success != "") {
             finalText += "Se han borrado correctamente los siguientes archivos: \n\n" + success;
         }
-        if(failed != ""){
+        if (failed != "") {
             finalText += "No se han podido borrar los siguientes archivos: \n\n" + failed;
         }
-        if(finalText != ""){
+        if (finalText != "") {
             Dialogs.showInformationDialog("Result", finalText);
         }
 
     }
 
-    private void initDocumentsResultPanel(){
+    private void initDocumentsResultPanel() {
 
         documentsResultPanel = new Pane();
         documentsResultPanel.setPrefSize(320, 760);
@@ -294,15 +303,15 @@ public class Window extends Application {
         radioButtonSortByName.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent event) {
-                if(vBoxDocumentsResult.getChildren().size() != 0){
-                    if(radioButtonSortByDateCreated.isSelected()){
+                if (vBoxDocumentsResult.getChildren().size() != 0) {
+                    if (radioButtonSortByDateCreated.isSelected()) {
                         radioButtonSortByDateCreated.setSelected(false);
                     }
-                    if(radioButtonSortBySize.isSelected()){
+                    if (radioButtonSortBySize.isSelected()) {
                         radioButtonSortBySize.setSelected(false);
                     }
                     sortByName();
-                }else{
+                } else {
                     Dialogs.showErrorDialog("Failed", "You must perform a search");
                     radioButtonSortByName.setSelected(false);
                 }
@@ -317,15 +326,15 @@ public class Window extends Application {
         radioButtonSortByDateCreated.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent event) {
-                if(vBoxDocumentsResult.getChildren().size() != 0){
-                    if(radioButtonSortByName.isSelected()){
+                if (vBoxDocumentsResult.getChildren().size() != 0) {
+                    if (radioButtonSortByName.isSelected()) {
                         radioButtonSortByName.setSelected(false);
                     }
-                    if(radioButtonSortBySize.isSelected()){
+                    if (radioButtonSortBySize.isSelected()) {
                         radioButtonSortBySize.setSelected(false);
                     }
                     sortByDateCreated();
-                }else{
+                } else {
                     Dialogs.showErrorDialog("Failed", "You must perform a search");
                     radioButtonSortByDateCreated.setSelected(false);
                 }
@@ -340,15 +349,15 @@ public class Window extends Application {
         radioButtonSortBySize.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent event) {
-                if(vBoxDocumentsResult.getChildren().size() != 0){
-                    if(radioButtonSortByDateCreated.isSelected()){
+                if (vBoxDocumentsResult.getChildren().size() != 0) {
+                    if (radioButtonSortByDateCreated.isSelected()) {
                         radioButtonSortByDateCreated.setSelected(false);
                     }
-                    if(radioButtonSortByName.isSelected()){
+                    if (radioButtonSortByName.isSelected()) {
                         radioButtonSortByName.setSelected(false);
                     }
                     sortBySize();
-                }else{
+                } else {
                     Dialogs.showErrorDialog("Failed", "You must perform a search");
                     radioButtonSortBySize.setSelected(false);
                 }
@@ -375,15 +384,12 @@ public class Window extends Application {
         vBoxDocumentsResult.setPrefSize(251, 100);
         scrollPaneDocumentsResult.setContent(vBoxDocumentsResult);
 
-
-        //Llamar funcion para re indexar todoo
-
     }
 
-    private void initResultPanel(){
+    private void initResultPanel() {
 
         resultPanel = new Pane();
-        resultPanel.setPrefSize(716,674);
+        resultPanel.setPrefSize(716, 674);
         resultPanel.setLayoutX(322);
         resultPanel.setLayoutY(84);
         resultPanel.setBackground(new Background(new BackgroundFill(Color.rgb(255, 220, 192), CornerRadii.EMPTY, Insets.EMPTY)));
@@ -392,32 +398,40 @@ public class Window extends Application {
         lblResultDocumentName = new Label("Document: ");
         lblResultDocumentName.setLayoutX(10);
         lblResultDocumentName.setLayoutY(10);
-        lblResultDocumentName.setTextFill(Color.rgb(102,51,0));
+        lblResultDocumentName.setTextFill(Color.rgb(102, 51, 0));
         resultPanel.getChildren().add(lblResultDocumentName);
 
         lblResultWord = new Label("Word: ");
-        lblResultWord.setLayoutX(300);
+        lblResultWord.setLayoutX(350);
         lblResultWord.setLayoutY(10);
-        lblResultWord.setTextFill(Color.rgb(102,51,0));
+        lblResultWord.setTextFill(Color.rgb(102, 51, 0));
         resultPanel.getChildren().add(lblResultWord);
 
         lblResultAparitions = new Label("Aparitions: ");
         lblResultAparitions.setLayoutX(620);
         lblResultAparitions.setLayoutY(10);
-        lblResultAparitions.setTextFill(Color.rgb(102,51,0));
+        lblResultAparitions.setTextFill(Color.rgb(102, 51, 0));
         resultPanel.getChildren().add(lblResultAparitions);
 
+        ScrollPane scrollPane = new ScrollPane();
+        scrollPane.setPrefSize(704,639);
+        scrollPane.setLayoutX(4);
+        scrollPane.setLayoutY(33);
+        scrollPane.setHbarPolicy(ScrollPane.ScrollBarPolicy.AS_NEEDED);
+        scrollPane.setVbarPolicy(ScrollPane.ScrollBarPolicy.AS_NEEDED);
+        resultPanel.getChildren().add(scrollPane);
+
         textFlow = new TextFlow();
-        textFlow.setPrefSize(706, 627);
+        textFlow.setPrefSize(704, 639);
         textFlow.setLayoutX(5);
         textFlow.setLayoutY(44);
         textFlow.setTextAlignment(TextAlignment.JUSTIFY);
         textFlow.setLineSpacing(5.0);
         textFlow.setBackground(new Background(new BackgroundFill(Color.rgb(255, 255, 255), CornerRadii.EMPTY, Insets.EMPTY)));
-        resultPanel.getChildren().add(textFlow);
+        scrollPane.setContent(textFlow);
 
         searchPanel = new Pane();
-        searchPanel.setPrefSize(716,82);
+        searchPanel.setPrefSize(716, 82);
         searchPanel.setLayoutX(322);
         searchPanel.setLayoutY(0);
         searchPanel.setBackground(new Background(new BackgroundFill(Color.rgb(233, 150, 122), CornerRadii.EMPTY, Insets.EMPTY)));
@@ -425,13 +439,13 @@ public class Window extends Application {
 
         textFieldSearch = new TextField();
         textFieldSearch.setPromptText("Enter a word or phrase to search");
-        textFieldSearch.setPrefSize(514,31);
+        textFieldSearch.setPrefSize(472, 31);
         textFieldSearch.setLayoutX(29);
         textFieldSearch.setLayoutY(26);
         searchPanel.getChildren().add(textFieldSearch);
 
         Button btnSearch = new Button("Search");
-        btnSearch.setLayoutX(594);
+        btnSearch.setLayoutX(515);
         btnSearch.setLayoutY(26);
         btnSearch.setOnAction(new EventHandler<ActionEvent>() {
             @Override
@@ -439,35 +453,59 @@ public class Window extends Application {
                 Label[] labels = {lblResultDocumentName, lblResultWord, lblResultAparitions};
                 if (!textFieldSearch.getText().equals("")) {
                     Indexing.textSearch(textFieldSearch.getText(), vBoxDocumentsResult, textFlow, btnOpenFile, labels);
-                }else{ //Vacio
+                } else { //Vacio
                     Dialogs.showErrorDialog("Failed", "The textfield is empty.");
                 }
             }
         });
         searchPanel.getChildren().add(btnSearch);
 
+        radioButtonByWord = new RadioButton("By word");
+        radioButtonByWord.setLayoutX(603);
+        radioButtonByWord.setLayoutY(16);
+        radioButtonByWord.setSelected(true);
+        radioButtonByWord.setTextFill(Color.WHITE);
+        radioButtonByWord.setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent event) {
+                radioButtonByPhrase.setSelected(false);
+            }
+        });
+        searchPanel.getChildren().add(radioButtonByWord);
+
+        radioButtonByPhrase = new RadioButton("By phrase");
+        radioButtonByPhrase.setLayoutX(603);
+        radioButtonByPhrase.setLayoutY(47);
+        radioButtonByPhrase.setTextFill(Color.WHITE);
+        radioButtonByPhrase.setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent event) {
+                radioButtonByWord.setSelected(false);
+            }
+        });
+
+        searchPanel.getChildren().add(radioButtonByPhrase);
     }
 
-    private Button[] getButtons(){
-        Button [] buttons = new Button[vBoxDocumentsResult.getChildren().size()];
+    private Button[] getButtons() {
+        Button[] buttons = new Button[vBoxDocumentsResult.getChildren().size()];
 
-        for(int i = 0; i < vBoxDocumentsResult.getChildren().size(); i++){
+        for (int i = 0; i < vBoxDocumentsResult.getChildren().size(); i++) {
 
-            buttons[i] = ((Button)vBoxDocumentsResult.getChildren().get(i));
+            buttons[i] = ((Button) vBoxDocumentsResult.getChildren().get(i));
 
         }
 
         return buttons;
     }
 
+    private void sortBySize() {
 
-    private void sortBySize(){
-
-        Button [] buttons = getButtons(); //Obtiene todos los botones (lista de documentos) y los almacena en un arreglo
+        Button[] buttons = getButtons(); //Obtiene todos los botones (lista de documentos) y los almacena en un arreglo
         vBoxDocumentsResult.getChildren().clear(); //Vacia el container para agregar de nuevo los elementos en orden
 
         //Hacer ordenamiento redixsort
-        for(int i = 0; i < buttons.length; i++){ //Recorre los botones
+        for (int i = 0; i < buttons.length; i++) { //Recorre los botones
 
             //Para obtener el tamano de un archivo
             File file = new File(buttons[i].getId()); //El id de boton es la ruta del archivo, de esta manera se abre el archivo con este nombre
@@ -478,18 +516,18 @@ public class Window extends Application {
         }
 
         //Una vez ordenados volver a recorrer la lista ya ordenada agregando nuevamente los botones al container
-        for(int i = 0; i < buttons.length; i++){ //Recorre los botones
+        for (int i = 0; i < buttons.length; i++) { //Recorre los botones
             vBoxDocumentsResult.getChildren().add(buttons[i]);
         }
     }
 
-    private void sortByName(){
+    private void sortByName() {
 
-        Button [] buttons = getButtons(); //Obtiene todos los botones (lista de documentos) y los almacena en un arreglo
+        Button[] buttons = getButtons(); //Obtiene todos los botones (lista de documentos) y los almacena en un arreglo
         vBoxDocumentsResult.getChildren().clear(); //Vacia el container para agregar de nuevo los elementos en orden
 
         //Hacer ordenamiento quicksort
-        for(int i = 0; i < buttons.length; i++){ //Recorre los botones
+        for (int i = 0; i < buttons.length; i++) { //Recorre los botones
 
             //Para obtener el nombre de un archivo
             String name = buttons[i].getText(); //El boton tiene como nombre el nombre del archivo
@@ -499,19 +537,19 @@ public class Window extends Application {
         }
 
         //Una vez ordenados volver a recorrer la lista ya ordenada agregando nuevamente los botones al container
-        for(int i = 0; i < buttons.length; i++){ //Recorre los botones
+        for (int i = 0; i < buttons.length; i++) { //Recorre los botones
             vBoxDocumentsResult.getChildren().add(buttons[i]);
         }
 
     }
 
-    private void sortByDateCreated(){
+    private void sortByDateCreated() {
 
-        Button [] buttons = getButtons(); //Obtiene todos los botones (lista de documentos) y los almacena en un arreglo
+        Button[] buttons = getButtons(); //Obtiene todos los botones (lista de documentos) y los almacena en un arreglo
         vBoxDocumentsResult.getChildren().clear(); //Vacia el container para agregar de nuevo los elementos en orden
 
         //Hacer ordenamiento bubblesort
-        for(int i = 0; i < buttons.length; i++){ //Recorre los botones
+        for (int i = 0; i < buttons.length; i++) { //Recorre los botones
 
             //Para la fecha de creacion de un archivo
             File file = new File(buttons[i].getId()); //El id de boton es la ruta del archivo, de esta manera se abre el archivo con este nombre
@@ -522,21 +560,10 @@ public class Window extends Application {
         }
 
         //Una vez ordenados volver a recorrer la lista ya ordenada agregando nuevamente los botones al container
-        for(int i = 0; i < buttons.length; i++){ //Recorre los botones
+        for (int i = 0; i < buttons.length; i++) { //Recorre los botones
             vBoxDocumentsResult.getChildren().add(buttons[i]);
         }
 
-    }
-
-    public static long getFileCreationEpoch (File file) {
-        try {
-            BasicFileAttributes attr = Files.readAttributes(file.toPath(),
-                    BasicFileAttributes.class);
-            return attr.creationTime()
-                    .toInstant().toEpochMilli();
-        } catch (IOException e) {
-            throw new RuntimeException(file.getAbsolutePath(), e);
-        }
     }
 
 }

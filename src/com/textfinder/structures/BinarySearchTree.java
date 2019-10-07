@@ -1,7 +1,10 @@
 package com.textfinder.structures;
 
 /**
+ * @autor Adrian Araya Ramirez
+ * @author Daniel Quesada Camacho
  *
+ * @version 1.8
  */
 class BinarySearchTree {
 
@@ -9,7 +12,9 @@ class BinarySearchTree {
     private KeyNode result;
 
     /**
-     *
+     * @autor Adrian Araya Ramirez
+     * @author Daniel Quesada Camacho
+     * @version 1.8
      */
     class Node {
         KeyNode key;
@@ -22,16 +27,14 @@ class BinarySearchTree {
     }
 
     /**
-     *
+     *  Constructor
      */
     public BinarySearchTree() {
         root = null;
     }
 
     /**
-     *
      * Inserta un nodo
-     *
      * @param key
      */
     public void insert(KeyNode key) {
@@ -39,12 +42,10 @@ class BinarySearchTree {
     }
 
     /**
-     *
      * Llama recursiva para insertar el nodo
-     *
      * @param root
      * @param key
-     * @return
+     * @return Node
      */
     public Node insertRec(Node root, KeyNode key) {
 
@@ -52,14 +53,12 @@ class BinarySearchTree {
             root = new Node(key);
             return root;
         }
-
         if (key.getWord().compareTo(root.key.getWord()) < 0)
             root.left = insertRec(root.left, key);
         else if (key.getWord().compareTo(root.key.getWord()) > 0)
             root.right = insertRec(root.right, key);
 
         return root;
-
     }
 
     /**
@@ -78,9 +77,7 @@ class BinarySearchTree {
     }
 
     /**
-     *
      * Busca la palabra inroder pasada por parametro y devuelve el nodo
-     *
      * @param pWord
      * @return KeyNode
      */
@@ -91,9 +88,7 @@ class BinarySearchTree {
     }
 
     /**
-     *
      * Llamada recursiva inorder para buscar la palabra.
-     *
      * @param root
      * @param pWord
      */
