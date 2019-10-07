@@ -10,6 +10,11 @@ import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
 import java.util.ArrayList;
 
+/**
+ * @author Adrian Araya Ramirez
+ * @author Daniel Quesada Camacho
+ * @version 1.8
+ */
 public class DocumentLibrary {
 
     public final static String PATH1 = "C:/Users/carlo/OneDrive/Escritorio/TEC 2019/Material de cursos/Datos 1/Proyectos/Proyecto 2/Proyecto_2_CE/src/com/textfinder/documentlibrary/documents/";
@@ -17,20 +22,15 @@ public class DocumentLibrary {
     public static ArrayList<String> filesString = new ArrayList<String>();
     public static ArrayList<File> files = new ArrayList<File>();
 
+    /**
+     * Contructor
+     */
     private DocumentLibrary(){}
 
-    public static ArrayList<String> getFileList(String pPath){
-        File directoryFile = new File(pPath); // carpeta donde estan los pdf
-        String[] listFiles = directoryFile.list();//extrae los nombres de archivo
-        ArrayList<String> fileList = new ArrayList<String>();
-
-        for(int i = 0; i < directoryFile.list().length; i++){
-            fileList.add(listFiles[i]);
-        }
-
-        return fileList;
-    }
-
+    /**
+     * Configura el filechooser
+     * @param pFileChooser
+     */
     private static void configFileChooser(FileChooser pFileChooser){
         pFileChooser.setTitle("Add file");
         FileChooser.ExtensionFilter txtFilter = new FileChooser.ExtensionFilter("TXT files (*.txt)", "*.txt");
@@ -41,6 +41,11 @@ public class DocumentLibrary {
         pFileChooser.getExtensionFilters().add(docxFilter);
     }
 
+    /**
+     * Copia el archivo a la biblioteca, retorna true si se realiza correctamente y false de lo contrario
+     * @param file
+     * @return boolean
+     */
     private static boolean copyFiles(File file){
 
         updateFileList();
@@ -62,6 +67,11 @@ public class DocumentLibrary {
         }
     }
 
+    /**
+     * Agrega un archivo a la biblioteca de documentos
+     * @param stage
+     * @return boolean
+     */
     public static boolean addFile(Stage stage) {
 
         //Instancia y configuracion del filechooser
@@ -78,8 +88,6 @@ public class DocumentLibrary {
                 Dialogs.showErrorDialog("Failed", "The file you want to enter is already in the library");
                 //AGREGAR OPCION DE REEMPLAZAR.
             }
-
-
             return true;
         }else {
             return false;
@@ -87,6 +95,11 @@ public class DocumentLibrary {
 
     }
 
+    /**
+     * Agrega una carpeta de archivos a la biblioteca de documentos
+     * @param stage
+     * @return boolean
+     */
     public static boolean addFolder(Stage stage){
 
         DirectoryChooser chooser = new DirectoryChooser();
@@ -111,14 +124,11 @@ public class DocumentLibrary {
                 }else{
                     filesNamesFailed += folder.list()[i] + "   ------>   extension denied\n";
                 }
-
             }
-
         }
         if(filesNamesSuccess != ""){
             finalText += "The following files have been successfully added: \n\n" + filesNamesSuccess + "\n";
         }
-
         if(filesNamesFailed != ""){
             finalText += "Due to an error the following files have not been added: \n\n" + filesNamesFailed + "\n";
         }
@@ -126,6 +136,11 @@ public class DocumentLibrary {
         return true;
     }
 
+    /**
+     * Elimina un documento de la lista de documentos
+     * @param pFile
+     * @return boolean
+     */
     public static boolean deleteFile(String pFile){
 
         for(int i = 0; i < files.size(); i++){
@@ -138,15 +153,20 @@ public class DocumentLibrary {
         return false;
     }
 
+    /**
+     * Actualiza la lista de documentos de la biblioteca
+     * @return boolean
+     */
     public static boolean refreshFiles(){
         updateFileList();
         return true;
     }
 
-    public static boolean openFile(String pFile){
-        return true;
-    }
-
+    /**
+     * Devuelve la extension del archivo pasado por parametro
+     * @param file
+     * @return String
+     */
     public static String getFileExtension(File file) {
         String fileName = file.getName();
         if(fileName.lastIndexOf(".") != -1 && fileName.lastIndexOf(".") != 0)
@@ -154,6 +174,9 @@ public class DocumentLibrary {
         else return "";
     }
 
+    /**
+     * Actualiza la lista de documentos de la biblioteca
+     */
     public static void updateFileList(){
         filesString = new ArrayList<String>();
         files = new ArrayList<File>();
@@ -165,11 +188,4 @@ public class DocumentLibrary {
             files.add(directoryFile.listFiles()[i]);
         }
     }
-
-    private void printFileList(){
-        for(int i = 0; i < filesString.size(); i++){
-            System.out.println(filesString.get(i));
-        }
-    }
-
 }

@@ -17,8 +17,6 @@ import javafx.scene.text.Font;
 import javafx.scene.text.TextAlignment;
 import javafx.scene.text.TextFlow;
 import javafx.stage.Stage;
-
-import javax.swing.*;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
@@ -67,7 +65,7 @@ public class Window extends Application {
     }
 
     /**
-     *
+     * Devuelve la fecha de creacion del archivo pasado por parametro (en un formato de milisegundos para comparar con otros archivos)
      * @param file
      * @return
      */
@@ -82,9 +80,14 @@ public class Window extends Application {
         }
     }
 
+    /**
+     * Inicia la interfaz.
+     * @param stage
+     */
     @Override
     public void start(Stage stage) {
 
+        //Actualiza los documentos de la biblioteca
         DocumentLibrary.updateFileList();
         checkboxListLibraryFiles = new ArrayList<CheckBox>();
 
@@ -96,6 +99,7 @@ public class Window extends Application {
         root = panel;
         stage.setScene(new Scene(panel, 1360, 760));
 
+        //Inicializa todos los paneles con sus componentes
         initLibraryPanel();
         initDocumentsResultPanel();
         initResultPanel();
@@ -103,10 +107,12 @@ public class Window extends Application {
         stage.show();
     }
 
+    /**
+     * Crea el panel que muestra y controla los documentos disponibles en la libreria
+     */
     private void initLibraryPanel() {
 
         //Panel de libreria
-
         libraryPanel = new Pane();
         libraryPanel.setPrefSize(320, 760);
         libraryPanel.setLayoutX(0);
@@ -115,7 +121,6 @@ public class Window extends Application {
         root.getChildren().add(libraryPanel);
 
         //Label del titulo panel de libreria
-
         Label lblTitle = new Label("File manager tools");
         lblTitle.setLayoutX(30);
         lblTitle.setLayoutY(22);
@@ -133,8 +138,8 @@ public class Window extends Application {
         btnAddFile.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent event) {
-                DocumentLibrary.addFile(stage);
-                updateCheckBox();
+                DocumentLibrary.addFile(stage); //Agrega un archivo a la biblioteca
+                updateCheckBox(); //Actualiza la lista que muestra estos archivos
             }
         });
         libraryPanel.getChildren().add(btnAddFile);
@@ -148,8 +153,8 @@ public class Window extends Application {
         btnAddFolder.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent event) {
-                DocumentLibrary.addFolder(stage);
-                updateCheckBox();
+                DocumentLibrary.addFolder(stage); //Agrega una carpeta de archivos a la biblioteca
+                updateCheckBox(); //Actualiza la lista que muestra los documentos
             }
         });
         libraryPanel.getChildren().add(btnAddFolder);
@@ -163,8 +168,7 @@ public class Window extends Application {
         btnDeleteFile.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent event) {
-                removeCheckBoxFiles();
-
+                removeCheckBoxFiles(); //Borra los archivos seleccionados
             }
         });
         libraryPanel.getChildren().add(btnDeleteFile);
@@ -178,9 +182,9 @@ public class Window extends Application {
         btnRefreshFiles.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent event) {
-                DocumentLibrary.refreshFiles();
-                updateCheckBox();
-                parseDocuments();
+                DocumentLibrary.refreshFiles(); //Actualiza los archivos de la biblioteca
+                updateCheckBox(); //Actualiza la lista de documentos de la biblioteca
+                parseDocuments(); //Indexea nuevamente los documentos.
                 Dialogs.showInformationDialog("Success", "The file list has been updated successfully");
             }
         });
@@ -195,25 +199,24 @@ public class Window extends Application {
         btnIndex.setOnMousePressed(new EventHandler<MouseEvent>() {
             @Override
             public void handle(MouseEvent event) {
-                stage.getScene().setCursor(Cursor.WAIT);
+                stage.getScene().setCursor(Cursor.WAIT); //Pone el cursor en wait
             }
         });
         btnIndex.setOnMouseReleased(new EventHandler<MouseEvent>() {
             @Override
             public void handle(MouseEvent event) {
-                stage.getScene().setCursor(Cursor.DEFAULT);
+                stage.getScene().setCursor(Cursor.DEFAULT); //Pone el cursor default
             }
         });
         btnIndex.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent event) {
-                parseDocuments();
+                parseDocuments(); //Indexa los documentos
             }
         });
         libraryPanel.getChildren().add(btnIndex);
 
         //Scroll pane
-
         scrollPaneLibrary = new ScrollPane();
         scrollPaneLibrary.setPrefSize(270, 439);
         scrollPaneLibrary.setLayoutX(24);
@@ -223,31 +226,36 @@ public class Window extends Application {
         libraryPanel.getChildren().add(scrollPaneLibrary);
 
         //Container vbox
-        updateCheckBox();
-    }
-
-    private void updateCheckBox() {
         vBoxLibrary = new VBox();
         vBoxLibrary.setPrefSize(251, 100);
+        updateCheckBox(); //Actualiza la lista de documentos de la biblioteca
+    }
+
+    /**
+     * Actualiza la lista de documentos de la biblioteca
+     */
+    private void updateCheckBox() {
+        vBoxLibrary.getChildren().clear(); //Limpia la lista de documentos de container
         checkboxListLibraryFiles = new ArrayList<CheckBox>();
-        for (int i = 0; i < DocumentLibrary.filesString.size(); i++) {
+        for (int i = 0; i < DocumentLibrary.filesString.size(); i++) { //Agrega los documentos a la lista de documentos del container
 
             CheckBox checkBox = new CheckBox(DocumentLibrary.filesString.get(i));
             checkboxListLibraryFiles.add(checkBox);
             vBoxLibrary.getChildren().add(checkBox);
         }
         scrollPaneLibrary.setContent(vBoxLibrary);
-
-        //Llamar funcion para re indexar todoo.
     }
 
+    /**
+     * Elimina los documentos seleccionados de la lista de documentos
+     */
     private void removeCheckBoxFiles() {
 
         String success = "";
         String failed = "";
         String finalText = "";
 
-        for (int i = 0; i < checkboxListLibraryFiles.size(); i++) {
+        for (int i = 0; i < checkboxListLibraryFiles.size(); i++) { //Recorre la lista de checkbox buscando los documentos que esten seleccionados para borrarlos
 
             if (checkboxListLibraryFiles.get(i).isSelected()) {
                 vBoxLibrary.getChildren().remove(i);
@@ -270,11 +278,14 @@ public class Window extends Application {
         if (finalText != "") {
             Dialogs.showInformationDialog("Result", finalText);
         }
-
     }
 
+    /**
+     * Inicializa el panel que muestra los documentos que contienen la palabra buscada y sus componentes
+     */
     private void initDocumentsResultPanel() {
 
+        //Panel de resultados
         documentsResultPanel = new Pane();
         documentsResultPanel.setPrefSize(320, 760);
         documentsResultPanel.setLayoutX(1040);
@@ -282,6 +293,7 @@ public class Window extends Application {
         documentsResultPanel.setBackground(new Background(new BackgroundFill(Color.rgb(233, 150, 122), CornerRadii.EMPTY, Insets.EMPTY)));
         root.getChildren().add(documentsResultPanel);
 
+        //Titulo del panel
         Label lblTitle = new Label("List of results");
         lblTitle.setLayoutX(69);
         lblTitle.setLayoutY(22);
@@ -290,12 +302,14 @@ public class Window extends Application {
         lblTitle.setTextFill(Color.rgb(255, 255, 255));
         documentsResultPanel.getChildren().add(lblTitle);
 
+        //Titulo de los ordenamientos
         Label sortBy = new Label("Sort by");
         sortBy.setLayoutX(24);
         sortBy.setLayoutY(105);
         sortBy.setTextFill(Color.rgb(255, 255, 255));
         documentsResultPanel.getChildren().add(sortBy);
 
+        //radio button de sortbyname
         radioButtonSortByName = new RadioButton("Name");
         radioButtonSortByName.setLayoutX(24);
         radioButtonSortByName.setLayoutY(140);
@@ -303,14 +317,14 @@ public class Window extends Application {
         radioButtonSortByName.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent event) {
-                if (vBoxDocumentsResult.getChildren().size() != 0) {
+                if (vBoxDocumentsResult.getChildren().size() != 0) { //Deselecciona los otros radiobuttons
                     if (radioButtonSortByDateCreated.isSelected()) {
                         radioButtonSortByDateCreated.setSelected(false);
                     }
                     if (radioButtonSortBySize.isSelected()) {
                         radioButtonSortBySize.setSelected(false);
                     }
-                    sortByName();
+                    sortByName(); //Ordena los archivos por nombre
                 } else {
                     Dialogs.showErrorDialog("Failed", "You must perform a search");
                     radioButtonSortByName.setSelected(false);
@@ -319,6 +333,7 @@ public class Window extends Application {
         });
         documentsResultPanel.getChildren().add(radioButtonSortByName);
 
+        //Radio button de sortbydateCreated
         radioButtonSortByDateCreated = new RadioButton("Date created");
         radioButtonSortByDateCreated.setLayoutX(24);
         radioButtonSortByDateCreated.setLayoutY(170);
@@ -326,14 +341,14 @@ public class Window extends Application {
         radioButtonSortByDateCreated.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent event) {
-                if (vBoxDocumentsResult.getChildren().size() != 0) {
+                if (vBoxDocumentsResult.getChildren().size() != 0) { //Deselecciona los demas radiobuttons
                     if (radioButtonSortByName.isSelected()) {
                         radioButtonSortByName.setSelected(false);
                     }
                     if (radioButtonSortBySize.isSelected()) {
                         radioButtonSortBySize.setSelected(false);
                     }
-                    sortByDateCreated();
+                    sortByDateCreated(); //Ordena los resultados por fecha de creacion
                 } else {
                     Dialogs.showErrorDialog("Failed", "You must perform a search");
                     radioButtonSortByDateCreated.setSelected(false);
@@ -342,6 +357,7 @@ public class Window extends Application {
         });
         documentsResultPanel.getChildren().add(radioButtonSortByDateCreated);
 
+        //Radio button de sortbysize
         radioButtonSortBySize = new RadioButton("Size");
         radioButtonSortBySize.setLayoutX(24);
         radioButtonSortBySize.setLayoutY(200);
@@ -349,14 +365,14 @@ public class Window extends Application {
         radioButtonSortBySize.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent event) {
-                if (vBoxDocumentsResult.getChildren().size() != 0) {
+                if (vBoxDocumentsResult.getChildren().size() != 0) { //Deselecciona los otros radiobuttons
                     if (radioButtonSortByDateCreated.isSelected()) {
                         radioButtonSortByDateCreated.setSelected(false);
                     }
                     if (radioButtonSortByName.isSelected()) {
                         radioButtonSortByName.setSelected(false);
                     }
-                    sortBySize();
+                    sortBySize(); //Ordena los resultados por tamano
                 } else {
                     Dialogs.showErrorDialog("Failed", "You must perform a search");
                     radioButtonSortBySize.setSelected(false);
@@ -365,6 +381,7 @@ public class Window extends Application {
         });
         documentsResultPanel.getChildren().add(radioButtonSortBySize);
 
+        //boton que abre el archivo
         btnOpenFile = new Button();
         btnOpenFile.setLayoutX(24);
         btnOpenFile.setLayoutY(240);
@@ -372,6 +389,7 @@ public class Window extends Application {
         btnOpenFile.setText("Open File");
         documentsResultPanel.getChildren().add(btnOpenFile);
 
+        //scroll panel de container de los resultados
         scrollPaneDocumentsResult = new ScrollPane();
         scrollPaneDocumentsResult.setPrefSize(270, 439);
         scrollPaneDocumentsResult.setLayoutX(24);
@@ -380,14 +398,17 @@ public class Window extends Application {
         scrollPaneDocumentsResult.setVbarPolicy(ScrollPane.ScrollBarPolicy.AS_NEEDED);
         documentsResultPanel.getChildren().add(scrollPaneDocumentsResult);
 
+        //container de los resultados
         vBoxDocumentsResult = new VBox();
         vBoxDocumentsResult.setPrefSize(251, 100);
         scrollPaneDocumentsResult.setContent(vBoxDocumentsResult);
-
     }
 
+    /**
+     * Inicializa el panel que muestra la vista previa del documento con las palabras buscadas
+     */
     private void initResultPanel() {
-
+        //Panel de la vista previa
         resultPanel = new Pane();
         resultPanel.setPrefSize(716, 674);
         resultPanel.setLayoutX(322);
@@ -395,24 +416,28 @@ public class Window extends Application {
         resultPanel.setBackground(new Background(new BackgroundFill(Color.rgb(255, 220, 192), CornerRadii.EMPTY, Insets.EMPTY)));
         root.getChildren().add(resultPanel);
 
+        //label que muestra el nombre del documento
         lblResultDocumentName = new Label("Document: ");
         lblResultDocumentName.setLayoutX(10);
         lblResultDocumentName.setLayoutY(10);
         lblResultDocumentName.setTextFill(Color.rgb(102, 51, 0));
         resultPanel.getChildren().add(lblResultDocumentName);
 
+        //label que muestra la palabra buscada
         lblResultWord = new Label("Word: ");
         lblResultWord.setLayoutX(350);
         lblResultWord.setLayoutY(10);
         lblResultWord.setTextFill(Color.rgb(102, 51, 0));
         resultPanel.getChildren().add(lblResultWord);
 
+        //label que muestra la cantidad de apariciones de esa palabra en ese documento
         lblResultAparitions = new Label("Aparitions: ");
         lblResultAparitions.setLayoutX(620);
         lblResultAparitions.setLayoutY(10);
         lblResultAparitions.setTextFill(Color.rgb(102, 51, 0));
         resultPanel.getChildren().add(lblResultAparitions);
 
+        //scrollpane que almacena la vista previa del texto
         ScrollPane scrollPane = new ScrollPane();
         scrollPane.setPrefSize(704,639);
         scrollPane.setLayoutX(4);
@@ -421,6 +446,7 @@ public class Window extends Application {
         scrollPane.setVbarPolicy(ScrollPane.ScrollBarPolicy.AS_NEEDED);
         resultPanel.getChildren().add(scrollPane);
 
+        //textflow que muestra la vista previa de los documentos resultantes
         textFlow = new TextFlow();
         textFlow.setPrefSize(704, 639);
         textFlow.setLayoutX(5);
@@ -430,6 +456,7 @@ public class Window extends Application {
         textFlow.setBackground(new Background(new BackgroundFill(Color.rgb(255, 255, 255), CornerRadii.EMPTY, Insets.EMPTY)));
         scrollPane.setContent(textFlow);
 
+        //panel de busqueda
         searchPanel = new Pane();
         searchPanel.setPrefSize(716, 82);
         searchPanel.setLayoutX(322);
@@ -437,6 +464,7 @@ public class Window extends Application {
         searchPanel.setBackground(new Background(new BackgroundFill(Color.rgb(233, 150, 122), CornerRadii.EMPTY, Insets.EMPTY)));
         root.getChildren().add(searchPanel);
 
+        //textfield para ingresar la palabra a buscar
         textFieldSearch = new TextField();
         textFieldSearch.setPromptText("Enter a word or phrase to search");
         textFieldSearch.setPrefSize(472, 31);
@@ -444,6 +472,7 @@ public class Window extends Application {
         textFieldSearch.setLayoutY(26);
         searchPanel.getChildren().add(textFieldSearch);
 
+        //boton para buscar una palabra
         Button btnSearch = new Button("Search");
         btnSearch.setLayoutX(515);
         btnSearch.setLayoutY(26);
@@ -452,7 +481,7 @@ public class Window extends Application {
             public void handle(ActionEvent event) {
                 Label[] labels = {lblResultDocumentName, lblResultWord, lblResultAparitions};
                 if (!textFieldSearch.getText().equals("")) {
-                    Indexing.textSearch(textFieldSearch.getText(), vBoxDocumentsResult, textFlow, btnOpenFile, labels);
+                    Indexing.textSearch(textFieldSearch.getText(), vBoxDocumentsResult, textFlow, btnOpenFile, labels); //Busca la palabra en el arbol de indices
                 } else { //Vacio
                     Dialogs.showErrorDialog("Failed", "The textfield is empty.");
                 }
@@ -460,6 +489,7 @@ public class Window extends Application {
         });
         searchPanel.getChildren().add(btnSearch);
 
+        //boton de searchbyword
         radioButtonByWord = new RadioButton("By word");
         radioButtonByWord.setLayoutX(603);
         radioButtonByWord.setLayoutY(16);
@@ -468,11 +498,12 @@ public class Window extends Application {
         radioButtonByWord.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent event) {
-                radioButtonByPhrase.setSelected(false);
+                radioButtonByPhrase.setSelected(false); //deselecciona el otro radiobutton
             }
         });
         searchPanel.getChildren().add(radioButtonByWord);
 
+        //boton de searchbyphrase
         radioButtonByPhrase = new RadioButton("By phrase");
         radioButtonByPhrase.setLayoutX(603);
         radioButtonByPhrase.setLayoutY(47);
@@ -480,13 +511,16 @@ public class Window extends Application {
         radioButtonByPhrase.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent event) {
-                radioButtonByWord.setSelected(false);
+                radioButtonByWord.setSelected(false); //deselecciona el otro radiobutton
             }
         });
-
         searchPanel.getChildren().add(radioButtonByPhrase);
     }
 
+    /**
+     * Devuelve los botones del container de botones que guardan los documentos resultantes
+     * @return Button[]
+     */
     private Button[] getButtons() {
         Button[] buttons = new Button[vBoxDocumentsResult.getChildren().size()];
 
@@ -495,10 +529,12 @@ public class Window extends Application {
             buttons[i] = ((Button) vBoxDocumentsResult.getChildren().get(i));
 
         }
-
         return buttons;
     }
 
+    /**
+     * Ordena los resultados del container por tamano con el algoritmo de radixsort
+     */
     private void sortBySize() {
 
         Button[] buttons = getButtons(); //Obtiene todos los botones (lista de documentos) y los almacena en un arreglo
@@ -521,6 +557,9 @@ public class Window extends Application {
         }
     }
 
+    /**
+     * Ordena los resultados del container por nombre con el algoritmo de quicksort
+     */
     private void sortByName() {
 
         Button[] buttons = getButtons(); //Obtiene todos los botones (lista de documentos) y los almacena en un arreglo
@@ -543,6 +582,9 @@ public class Window extends Application {
 
     }
 
+    /**
+     * Ordena los resultados del container por fecha de creacion con el algoritmo de bubblesort
+     */
     private void sortByDateCreated() {
 
         Button[] buttons = getButtons(); //Obtiene todos los botones (lista de documentos) y los almacena en un arreglo
@@ -563,7 +605,5 @@ public class Window extends Application {
         for (int i = 0; i < buttons.length; i++) { //Recorre los botones
             vBoxDocumentsResult.getChildren().add(buttons[i]);
         }
-
     }
-
 }
