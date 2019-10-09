@@ -212,32 +212,40 @@ public class Indexing {
      */
     private static Button createButton(Occurrence pOccurrence, TextFlow pTextFlow, Button btnOpenFile, String pWordSearched){
 
-        Button button = new Button(pOccurrence.getDocumentName());
-        String finalPath = pOccurrence.getDocument().getAbsolutePath();
-        String finalText = getText(pOccurrence.getDocument());
+        Button button = new Button(pOccurrence.getDocumentName()); //Nombra el boton con el nombre de documento
+        String finalPath = pOccurrence.getDocument().getAbsolutePath(); //Guarda la ruta del documento
+        String finalText = getText(pOccurrence.getDocument()); //Almacena el texto del documento
 
-        ArrayList<Node> nodes = new ArrayList<Node>();
+        ArrayList<Node> nodes = new ArrayList<Node>(); //Crea la lista de nodos que almacenara los textos del textflow
+
+        int counter = 0;
 
         for(int e = 0; e < finalText.length(); e++){
 
             Text text;
 
-            if(e + pWordSearched.length()<= finalText.length() && finalText.substring(e, e + pWordSearched.length()).equals(pWordSearched) ) {
-                text = new Text(pWordSearched + " ");
-                text.setFill(Color.YELLOW);
-                text.setFont(Font.font("verdana", FontWeight.BOLD, FontPosture.REGULAR, 19));
-
-                //Setting the Stroke
-                text.setStrokeWidth(1);
-
-                // Setting the stroke color
-                text.setStroke(Color.BLACK);
-                e = e + pWordSearched.length();
-            }else{
+            if(finalText.charAt(e) == ' ' || finalText.charAt(e) == '\n') { //Busca los espacios para contar las palabras
+                counter++;
                 text = new Text(""+finalText.charAt(e));
                 text.setFill(Color.BLACK);
             }
 
+            if(pOccurrence.getPosition().contains(counter)){ //Si la ocurrencia tiene esta posicion en su lista de posiciones la pinta diferente
+
+                    text = new Text(" " + pWordSearched + " ");
+                    text.setFill(Color.YELLOW);
+                    text.setFont(Font.font("verdana", FontWeight.BOLD, FontPosture.REGULAR, 19));
+
+                    text.setStrokeWidth(1);
+
+                    text.setStroke(Color.BLACK);
+                    e = e + pWordSearched.length(); //Mueve el marcador de caracteres despues de la palabra
+
+                    pOccurrence.getPosition().remove((Integer)counter); //Elimina la posicion de la lista de posiciones de la palabra
+            }else{
+                text = new Text(""+finalText.charAt(e));
+                text.setFill(Color.BLACK);
+            }
             nodes.add(text);
         }
 
