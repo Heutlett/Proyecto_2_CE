@@ -488,7 +488,7 @@ public class Window extends Application {
             }
         });
         searchPanel.getChildren().add(btnSearch);
-
+        /*
         //boton de searchbyword
         radioButtonByWord = new RadioButton("By word");
         radioButtonByWord.setLayoutX(603);
@@ -515,6 +515,8 @@ public class Window extends Application {
             }
         });
         searchPanel.getChildren().add(radioButtonByPhrase);
+        
+         */
     }
 
     /**
