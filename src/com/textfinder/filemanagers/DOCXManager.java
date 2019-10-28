@@ -3,6 +3,8 @@ package com.textfinder.filemanagers;
 import com.textfinder.structures.Dialogs;
 import org.apache.poi.xwpf.extractor.XWPFWordExtractor;
 import org.apache.poi.xwpf.usermodel.XWPFDocument;
+
+import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 
@@ -20,6 +22,11 @@ public class DOCXManager {
     public static String getText(String pPath){
 
         try {
+            File a = new File(pPath);
+
+            if(a.length()==0){
+                return "";
+            }
 
             XWPFDocument docx = new XWPFDocument(new FileInputStream(pPath));
             XWPFWordExtractor we = new XWPFWordExtractor(docx);
@@ -40,6 +47,13 @@ public class DOCXManager {
     public static String getPlainText(String pPath){
 
         try {
+
+            File a = new File(pPath);
+
+            if(a.length()==0){
+                return "";
+            }
+
             XWPFDocument docx = new XWPFDocument(new FileInputStream(pPath));
             XWPFWordExtractor we = new XWPFWordExtractor(docx);
             return we.getText();

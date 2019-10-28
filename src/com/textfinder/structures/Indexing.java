@@ -150,8 +150,12 @@ public class Indexing {
 
         } else { //Una frase
 
+            Dialogs.showInformationDialog("Ingreso una frase", "frase");
+
         }
     }
+
+    
 
     /**
      * Agrega los documentos que contienen la palabra buscada en la lista de documentos resultantes.
