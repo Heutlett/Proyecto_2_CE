@@ -87,6 +87,8 @@ public class Window extends Application {
     @Override
     public void start(Stage stage) {
 
+        stage.setResizable(false);
+
         //Actualiza los documentos de la biblioteca
         DocumentLibrary.updateFileList();
         checkboxListLibraryFiles = new ArrayList<CheckBox>();
@@ -97,7 +99,7 @@ public class Window extends Application {
         //Se crea el panel y se agrega al stage
         Pane panel = new Pane();
         root = panel;
-        stage.setScene(new Scene(panel, 1360, 760));
+        stage.setScene(new Scene(panel, 1350, 750));
 
         //Inicializa todos los paneles con sus componentes
         initLibraryPanel();

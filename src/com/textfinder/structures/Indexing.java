@@ -30,6 +30,7 @@ public class Indexing {
     private static ArrayList<String> words;
     private static int wordsIndexed = 0;
     private static Label[] labels;
+    private static boolean isIndexed = false;
 
     /**
      * Constructor
@@ -61,6 +62,7 @@ public class Indexing {
 
         binarySearchTree.inorderPrint();
         Dialogs.showInformationDialog("Success", wordsIndexed + " words have been indexed");
+        isIndexed = true;
     }
 
     /**
@@ -144,18 +146,56 @@ public class Indexing {
 
         labels = pLabels;
 
-        if (pText.split(" ").length == 1) {//Una palabra
+        if(isIndexed){
 
-            wordSearch(pText, pVBox, pTextFlow, btnOpenFile);
+            if (pText.split(" ").length == 1) {//Una palabra
 
-        } else { //Una frase
+                wordSearch(pText, pVBox, pTextFlow, btnOpenFile);
 
-            Dialogs.showInformationDialog("Ingreso una frase", "frase");
+            } else { //Una frase
 
+                phraseSearch(pText, pVBox, pTextFlow, btnOpenFile);
+
+            }
+        }else{
+            Dialogs.showErrorDialog("Indexing error", "You must index to perform the search");
         }
+
     }
 
-    
+    /**
+     * Agrega los documentos que contienen la frase buscada a la lista de documentos resultantes.
+     * @param pWord
+     * @param pVBox
+     * @param pTextFlow
+     * @param btnOpenFile
+     */
+    private static void phraseSearch(String pWord, VBox pVBox, TextFlow pTextFlow, Button btnOpenFile){
+
+        System.out.println("Buscando la frase: " + pWord);
+        pVBox.getChildren().clear();
+
+        ArrayList<File> files = DocumentLibrary.files;
+
+        for(int i = 0; i < files.size(); i++){
+
+            String text = getText(files.get(i));
+
+            for(int e = 0; e < text.length(); e++){
+
+                if((e + pWord.length() <= text.length()) && pWord.equals(text.substring(e, e + pWord.length()))){
+
+                    e = e + pWord.length();
+
+                    Button button = createButtonPhrase(files.get(i).getName(),files.get(i).getAbsolutePath(),getText(files.get(i)), pTextFlow, btnOpenFile, pWord);
+                    button.setId(files.get(i).getAbsolutePath());
+                    pVBox.getChildren().add(button);
+
+                }
+            }
+        }
+
+    }
 
     /**
      * Agrega los documentos que contienen la palabra buscada en la lista de documentos resultantes.
@@ -174,7 +214,7 @@ public class Indexing {
             System.out.println("Se encontraron " + node.getOccurrenceList().size() + " resultados");
             for (int i = 0; i < node.getOccurrenceList().size(); i++) {
 
-                Button button = createButton(node.getOccurrenceList().get(i), pTextFlow, btnOpenFile, pWord);
+                Button button = createButtonWord(node.getOccurrenceList().get(i), pTextFlow, btnOpenFile, pWord);
                 button.setId(node.getOccurrenceList().get(i).getDocument().getAbsolutePath());
                 pVBox.getChildren().add(button);
             }
@@ -207,6 +247,52 @@ public class Indexing {
     }
 
     /**
+     * Crea y le da la funcion a los botones que abriran los documentos y mostraran los resultados de las frases subrayadas.
+     * @param pDocumentName
+     * @param pPath
+     * @param pText
+     * @param pTextFlow
+     * @param btnOpenFile
+     * @param pWordSearched
+     * @return
+     */
+    private static Button createButtonPhrase(String pDocumentName, String pPath, String pText, TextFlow pTextFlow, Button btnOpenFile, String pWordSearched){
+
+        Button button = new Button(pDocumentName); //Nombra el boton con el nombre de documento
+        String finalPath = pPath; //Guarda la ruta del documento
+        String finalText = pText; //Almacena el texto del documento
+
+        ArrayList<Node> nodes = new ArrayList<Node>(); //Crea la lista de nodos que almacenara los textos del textflow
+        int aparitions = 0;
+
+        for(int e = 0; e < finalText.length(); e++){
+
+            Text text;
+
+            if((e + pWordSearched.length() <= finalText.length()) && pWordSearched.equals(finalText.substring(e, e + pWordSearched.length()))){
+                aparitions++;
+                text = new Text(" " + pWordSearched + " ");
+                text.setFill(Color.YELLOW);
+                text.setFont(Font.font("verdana", FontWeight.BOLD, FontPosture.REGULAR, 19));
+
+                text.setStrokeWidth(1);
+
+                text.setStroke(Color.BLACK);
+                e = e + pWordSearched.length(); //Mueve el marcador de caracteres despues de la palabra
+
+            }else{
+                text = new Text(""+finalText.charAt(e));
+                text.setFill(Color.BLACK);
+            }
+            nodes.add(text);
+        }
+
+        addAction(button,pDocumentName,pTextFlow,btnOpenFile,pWordSearched,nodes,finalPath, aparitions);
+
+        return button;
+    }
+
+    /**
      * Crea y le da la funcion a los botones que abriran los documentos y mostraran los resultados de las palabras subrayadas.
      * @param pOccurrence
      * @param pTextFlow
@@ -214,7 +300,7 @@ public class Indexing {
      * @param pWordSearched
      * @return
      */
-    private static Button createButton(Occurrence pOccurrence, TextFlow pTextFlow, Button btnOpenFile, String pWordSearched){
+    private static Button createButtonWord(Occurrence pOccurrence, TextFlow pTextFlow, Button btnOpenFile, String pWordSearched){
 
         Button button = new Button(pOccurrence.getDocumentName()); //Nombra el boton con el nombre de documento
         String finalPath = pOccurrence.getDocument().getAbsolutePath(); //Guarda la ruta del documento
@@ -223,6 +309,7 @@ public class Indexing {
         ArrayList<Node> nodes = new ArrayList<Node>(); //Crea la lista de nodos que almacenara los textos del textflow
 
         int counter = 0;
+        int aparitions = 0;
 
         for(int e = 0; e < finalText.length(); e++){
 
@@ -235,7 +322,7 @@ public class Indexing {
             }
 
             if(pOccurrence.getPosition().contains(counter)){ //Si la ocurrencia tiene esta posicion en su lista de posiciones la pinta diferente
-
+                    aparitions++;
                     text = new Text(" " + pWordSearched + " ");
                     text.setFill(Color.YELLOW);
                     text.setFont(Font.font("verdana", FontWeight.BOLD, FontPosture.REGULAR, 19));
@@ -253,7 +340,7 @@ public class Indexing {
             nodes.add(text);
         }
 
-        addAction(button,pOccurrence,pTextFlow,btnOpenFile,pWordSearched,nodes,finalPath);
+        addAction(button,pOccurrence.getDocumentName(),pTextFlow,btnOpenFile,pWordSearched,nodes,finalPath, aparitions);
 
         return button;
     }
@@ -261,20 +348,20 @@ public class Indexing {
     /**
      * Agrega las funciones al boton del documento resultante
      * @param pButton
-     * @param pOccurrence
+     * @param pDocumentName
      * @param pTextFlow
      * @param btnOpenFile
      * @param pWordSearched
      * @param nodes
      * @param finalPath
      */
-    private static void addAction(Button pButton, Occurrence pOccurrence, TextFlow pTextFlow, Button btnOpenFile, String pWordSearched, ArrayList<Node> nodes, String finalPath){
+    private static void addAction(Button pButton, String pDocumentName, TextFlow pTextFlow, Button btnOpenFile, String pWordSearched, ArrayList<Node> nodes, String finalPath, int pAparitions){
         pButton.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent event) {
                 pTextFlow.getChildren().clear();
                 clearLabels();
-                updateLabels(pOccurrence.getDocumentName(), pWordSearched, ""+pOccurrence.getPosition().size());
+                updateLabels(pDocumentName, pWordSearched, ""+pAparitions);
 
                 for (int i = 0; i < nodes.size(); i++) {
                     pTextFlow.getChildren().add(nodes.get(i));
