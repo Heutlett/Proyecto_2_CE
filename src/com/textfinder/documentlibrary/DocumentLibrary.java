@@ -16,9 +16,15 @@ import java.util.ArrayList;
  * @version 1.8
  */
 public class DocumentLibrary {
+    /*
+    cambiar a ruta dinamica
 
+    version adrian
     public final static String PATH1 = "C:/Users/carlo/OneDrive/Escritorio/TEC 2019/Material de cursos/Datos 1/Proyectos/Proyecto 2/Proyecto_2_CE/src/com/textfinder/documentlibrary/documents/";
     public final static String PATH2 = "C:\\Users\\carlo\\OneDrive\\Escritorio\\TEC 2019\\Material de cursos\\Datos 1\\Proyectos\\Proyecto 2\\Proyecto_2_CE\\src\\com\\textfinder\\documentlibrary\\documents";
+     */
+    public final static String PATH1 = "C:/Users/danic/Documents/GitHub/Proyecto_2_CE/src/com/textfinder/documentlibrary/documents/";
+    public final static String PATH2 = "C:\\Users\\danic\\Documents\\GitHub\\Proyecto_2_CE\\src\\com\\textfinder\\documentlibrary\\documents";
     public static ArrayList<String> filesString = new ArrayList<String>();
     public static ArrayList<File> files = new ArrayList<File>();
 
