@@ -17,8 +17,6 @@ import java.util.ArrayList;
  * @version 1.8
  */
 public class DocumentLibrary {
-    /*
-    cambiar a ruta dinamica
     
     public final static String PATH1 = "./src/com/textfinder/documentlibrary/documents";
     public static ArrayList<String> filesString = new ArrayList<String>();
