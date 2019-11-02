@@ -545,14 +545,25 @@ public class Window extends Application {
         Button[] buttons = getButtons(); //Obtiene todos los botones (lista de documentos) y los almacena en un arreglo
         vBoxDocumentsResult.getChildren().clear(); //Vacia el container para agregar de nuevo los elementos en orden
 
-        //Hacer ordenamiento redixsort
+        //Hacer ordenamiento
         for (int i = 0; i < buttons.length; i++) { //Recorre los botones
+
 
             //Para obtener el tamano de un archivo
             File file = new File(buttons[i].getId()); //El id de boton es la ruta del archivo, de esta manera se abre el archivo con este nombre
             long fileSize = file.length(); //obtiene el peso del archivo
 
             System.out.println("Archivo = " + file.getName() + " peso = " + file.length());
+
+            for(int j=0; j < buttons.length;j++) {
+                if (fileSize > fileSize) {
+                    Button aux = buttons[j];fileSize
+                    buttons[j] = buttons[j + 1];
+                    buttons[j + 1] = aux;
+                }
+            }
+
+
 
         }
 
@@ -570,9 +581,16 @@ public class Window extends Application {
         Button[] buttons = getButtons(); //Obtiene todos los botones (lista de documentos) y los almacena en un arreglo
         vBoxDocumentsResult.getChildren().clear(); //Vacia el container para agregar de nuevo los elementos en orden
 
-        //Hacer ordenamiento quicksort
+        //Hacer ordenamiento
         for (int i = 0; i < buttons.length; i++) { //Recorre los botones
 
+            for (int j = 0;j < buttons.length-1; j++) {
+                if (buttons[j].getText().compareTo(buttons[j+1].getText()) > 0){
+                    Button temporal = buttons[j];
+                    buttons[j]=buttons[j+1];
+                    buttons[j+1]=temporal;
+                }
+            }
             //Para obtener el nombre de un archivo
             String name = buttons[i].getText(); //El boton tiene como nombre el nombre del archivo
 
@@ -596,6 +614,7 @@ public class Window extends Application {
         vBoxDocumentsResult.getChildren().clear(); //Vacia el container para agregar de nuevo los elementos en orden
 
         //Hacer ordenamiento bubblesort
+
         for (int i = 0; i < buttons.length; i++) { //Recorre los botones
 
             //Para la fecha de creacion de un archivo
@@ -603,6 +622,14 @@ public class Window extends Application {
             long fileDateCreated = getFileCreationEpoch(file); //obtiene el peso del archivo
 
             System.out.println("Archivo = " + file.getName() + " fecha = " + fileDateCreated);
+
+                for(int j=0; j < buttons.length;j++) {
+                    if (fileDateCreated > fileDateCreated) {
+                        Button aux = buttons[j];
+                        buttons[j] = buttons[j + 1];
+                        buttons[j + 1] = aux;
+                    }
+                }
 
         }
 

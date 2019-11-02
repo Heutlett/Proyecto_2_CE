@@ -24,7 +24,6 @@ public class DocumentLibrary {
     public final static String PATH2 = "C:\\Users\\carlo\\OneDrive\\Escritorio\\TEC 2019\\Material de cursos\\Datos 1\\Proyectos\\Proyecto 2\\Proyecto_2_CE\\src\\com\\textfinder\\documentlibrary\\documents";
      */
     public final static String PATH1 = "C:/Users/danic/Documents/GitHub/Proyecto_2_CE/src/com/textfinder/documentlibrary/documents/";
-    public final static String PATH2 = "C:\\Users\\danic\\Documents\\GitHub\\Proyecto_2_CE\\src\\com\\textfinder\\documentlibrary\\documents";
     public static ArrayList<String> filesString = new ArrayList<String>();
     public static ArrayList<File> files = new ArrayList<File>();
 
@@ -186,7 +185,10 @@ public class DocumentLibrary {
     public static void updateFileList(){
         filesString = new ArrayList<String>();
         files = new ArrayList<File>();
-        File directoryFile = new File(PATH2); // carpeta donde estan los pdf
+
+        File directory = new File(PATH1);
+
+        File directoryFile = new File(directory.getAbsolutePath()); // carpeta donde estan los pdf
         String[] listFiles = directoryFile.list();//extrae los nombres de archivo
 
         for(int i = 0; i < directoryFile.list().length; i++){
