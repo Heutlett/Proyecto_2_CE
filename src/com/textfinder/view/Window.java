@@ -549,21 +549,25 @@ public class Window extends Application {
         for (int i = 0; i < buttons.length; i++) { //Recorre los botones
 
 
-            //Para obtener el tamano de un archivo
-            File file = new File(buttons[i].getId()); //El id de boton es la ruta del archivo, de esta manera se abre el archivo con este nombre
-            long fileSize = file.length(); //obtiene el peso del archivo
 
-            System.out.println("Archivo = " + file.getName() + " peso = " + file.length());
 
-            for(int j=0; j < buttons.length;j++) {
-                if (fileSize > fileSize) {
+            //System.out.println("Archivo = " + file.getName() + " peso = " + file.length());
+
+            for(int j=0; j < buttons.length-1;j++) {
+
+                //Para obtener el tamano de un archivo
+                File file1 = new File(buttons[j].getId()); //El id de boton es la ruta del archivo, de esta manera se abre el archivo con este nombre
+                long fileSize1 = file1.length(); //obtiene el peso del archivo
+
+                File file2 = new File(buttons[j+1].getId()); //El id de boton es la ruta del archivo, de esta manera se abre el archivo con este nombre
+                long fileSize2 = file2.length(); //obtiene el peso del archivo
+
+                if (fileSize1 > fileSize2) {
                     Button aux = buttons[j];
                     buttons[j] = buttons[j + 1];
                     buttons[j + 1] = aux;
                 }
             }
-
-
 
         }
 
@@ -618,8 +622,6 @@ public class Window extends Application {
         for (int i = 0; i < buttons.length; i++) { //Recorre los botones
 
             //Para la fecha de creacion de un archivo
-
-
 
             //System.out.println("Archivo = " + file.getName() + " fecha = " + fileDateCreated);
 
