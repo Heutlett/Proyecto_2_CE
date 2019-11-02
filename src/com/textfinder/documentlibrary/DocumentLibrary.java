@@ -4,6 +4,7 @@ import javafx.stage.DirectoryChooser;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 import java.io.*;
+import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -18,11 +19,7 @@ import java.util.ArrayList;
 public class DocumentLibrary {
     /*
     cambiar a ruta dinamica
-
-    version adrian
-    public final static String PATH1 = "C:/Users/carlo/OneDrive/Escritorio/TEC 2019/Material de cursos/Datos 1/Proyectos/Proyecto 2/Proyecto_2_CE/src/com/textfinder/documentlibrary/documents/";
-    public final static String PATH2 = "C:\\Users\\carlo\\OneDrive\\Escritorio\\TEC 2019\\Material de cursos\\Datos 1\\Proyectos\\Proyecto 2\\Proyecto_2_CE\\src\\com\\textfinder\\documentlibrary\\documents";
-     */
+    
     public final static String PATH1 = "./src/com/textfinder/documentlibrary/documents";
     public static ArrayList<String> filesString = new ArrayList<String>();
     public static ArrayList<File> files = new ArrayList<File>();
