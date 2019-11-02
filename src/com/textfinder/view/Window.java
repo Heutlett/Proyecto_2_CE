@@ -548,9 +548,6 @@ public class Window extends Application {
         //Hacer ordenamiento
         for (int i = 0; i < buttons.length; i++) { //Recorre los botones
 
-
-
-
             //System.out.println("Archivo = " + file.getName() + " peso = " + file.length());
 
             for(int j=0; j < buttons.length-1;j++) {

@@ -303,6 +303,7 @@ public class Indexing {
     private static Button createButtonWord(Occurrence pOccurrence, TextFlow pTextFlow, Button btnOpenFile, String pWordSearched){
 
         Button button = new Button(pOccurrence.getDocumentName()); //Nombra el boton con el nombre de documento
+        button.setPrefWidth(360);
         String finalPath = pOccurrence.getDocument().getAbsolutePath(); //Guarda la ruta del documento
         String finalText = getText(pOccurrence.getDocument()); //Almacena el texto del documento
 
