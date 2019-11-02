@@ -557,7 +557,7 @@ public class Window extends Application {
 
             for(int j=0; j < buttons.length;j++) {
                 if (fileSize > fileSize) {
-                    Button aux = buttons[j];fileSize
+                    Button aux = buttons[j];
                     buttons[j] = buttons[j + 1];
                     buttons[j + 1] = aux;
                 }
@@ -584,11 +584,11 @@ public class Window extends Application {
         //Hacer ordenamiento
         for (int i = 0; i < buttons.length; i++) { //Recorre los botones
 
-            for (int j = 0;j < buttons.length-1; j++) {
-                if (buttons[j].getText().compareTo(buttons[j+1].getText()) > 0){
+            for (int j = 1; j < buttons.length-1 ; j++) {
+                if (buttons[j].getText().compareTo(buttons[j-1].getText()) < 0){
                     Button temporal = buttons[j];
-                    buttons[j]=buttons[j+1];
-                    buttons[j+1]=temporal;
+                    buttons[j]=buttons[j-1];
+                    buttons[j-1]=temporal;
                 }
             }
             //Para obtener el nombre de un archivo
@@ -618,13 +618,20 @@ public class Window extends Application {
         for (int i = 0; i < buttons.length; i++) { //Recorre los botones
 
             //Para la fecha de creacion de un archivo
-            File file = new File(buttons[i].getId()); //El id de boton es la ruta del archivo, de esta manera se abre el archivo con este nombre
-            long fileDateCreated = getFileCreationEpoch(file); //obtiene el peso del archivo
 
-            System.out.println("Archivo = " + file.getName() + " fecha = " + fileDateCreated);
 
-                for(int j=0; j < buttons.length;j++) {
-                    if (fileDateCreated > fileDateCreated) {
+
+            //System.out.println("Archivo = " + file.getName() + " fecha = " + fileDateCreated);
+
+                for(int j=0; j < buttons.length-1;j++) {
+
+                    File file1 = new File(buttons[j].getId()); //El id de boton es la ruta del archivo, de esta manera se abre el archivo con este nombre
+                    long fileDateCreated1 = getFileCreationEpoch(file1); //obtiene el peso del archivo
+
+                    File file2 = new File(buttons[j+1].getId());
+                    long fileDateCreated2 = getFileCreationEpoch(file2);
+
+                    if (fileDateCreated1 > fileDateCreated2) {
                         Button aux = buttons[j];
                         buttons[j] = buttons[j + 1];
                         buttons[j + 1] = aux;
@@ -637,5 +644,7 @@ public class Window extends Application {
         for (int i = 0; i < buttons.length; i++) { //Recorre los botones
             vBoxDocumentsResult.getChildren().add(buttons[i]);
         }
+
+
     }
 }
